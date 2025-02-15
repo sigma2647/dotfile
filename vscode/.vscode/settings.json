@@ -19,6 +19,9 @@
 
     "workbench.list.automaticKeyboardNavigation": false,
 
+    "extensions.experimental.affinity": {
+        "asvetliakov.vscode-neovim": 1
+    },
     "vim.incsearch": true,
     "vim.useCtrlKeys": true,
     "vim.hlsearch": true,
@@ -298,5 +301,5 @@
     "Lingma.cloudModelAutoTriggerGenerateLength": "medium",
     "debug.console.fontSize": 15,
     "git.openRepositoryInParentFolders": "never",
-    "workbench.colorTheme": "Deepdark Material Theme | Full Black Version"
+    "workbench.colorTheme": "Deepdark Material Theme | Full Black Version",
 }
