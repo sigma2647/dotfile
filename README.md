@@ -1,6 +1,9 @@
-┌─────────┐
-│ dotfile │
-└─────────┘
+>┌─────────┐
+>│ dotfile │
+>└─────────┘
+
+## neovim add tab to swithch buffer
+
 
 # install
 ## install stow

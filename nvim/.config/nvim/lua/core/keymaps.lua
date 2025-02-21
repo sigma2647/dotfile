@@ -28,6 +28,10 @@ map("n", "<leader>h", ":nohlsearch<CR>")
 map("n", "Q", ":q<CR>")
 map("n", "S", ":w<CR>")
 
+map("n", "<tab>", ":bn<CR>")
+map("n", "<s-tab>", ":bp<CR>")
+
+
 map("v", "p", 'P')                          -- visual模式下覆盖粘贴不污染剪贴板
 
 
