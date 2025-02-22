@@ -62,6 +62,11 @@ map('t', '<C-j>', '<C-\\><C-n><C-w>j', { desc = 'Move to bottom window' })
 map('t', '<C-k>', '<C-\\><C-n><C-w>k', { desc = 'Move to top window' })
 map('t', '<C-l>', '<C-\\><C-n><C-w>l', { desc = 'Move to right window' })
 
+
+-- 缩进操作保持 Visual 模式
+map('v', '<', '<gv')
+map('v', '>', '>gv')
+
 vim.keymap.set("n", "<leader>n", function()
   local is_number = vim.wo.number
   if is_number then

@@ -1,5 +1,4 @@
-[
-    {
+[ {
         "key": "ctrl+\\",
         "command": "workbench.action.terminal.toggleTerminal",
         "when": "terminal.active"
@@ -89,16 +88,16 @@
     },
 
     // Coding
-    {
-        "key": "shift-j",
-        "command": "editor.action.moveLinesDownAction",
-        "when": "vim.mode != 'insert' && editorTextFocus"
-    },
-    {
-        "key": "shift-k",
-        "command": "editor.action.moveLinesUpAction",
-        "when": "vim.mode != 'insert' && editorTextFocus"
-    },
+    //{
+    //    "key": "shift-j",
+    //    "command": "editor.action.moveLinesDownAction",
+    //    "when": "vim.mode != 'insert' && editorTextFocus"
+    //},
+    //{
+    //    "key": "shift-k",
+    //    "command": "editor.action.moveLinesUpAction",
+    //    "when": "vim.mode != 'insert' && editorTextFocus"
+    //},
     {
         "key": "shift-k",
         "command": "editor.action.showHover",
