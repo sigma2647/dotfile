@@ -31,9 +31,19 @@
     "vim.highlightedyank.enable": true,
     "vim.camelCaseMotion.enable": true,
     "vim.autoSwitchInputMethod.enable": true,
-    "vim.autoSwitchInputMethod.defaultIM": "1033",
-    "vim.autoSwitchInputMethod.obtainIMCmd": "D:\\lawrence\\im-select.exe",
-    "vim.autoSwitchInputMethod.switchIMCmd": "D:\\lawrence\\im-select.exe {im}",
+
+
+    // windows 
+    // "vim.autoSwitchInputMethod.defaultIM": "1033",
+    // "vim.autoSwitchInputMethod.obtainIMCmd": "D:\\lawrence\\im-select.exe",
+    // "vim.autoSwitchInputMethod.switchIMCmd": "D:\\lawrence\\im-select.exe {im}",
+    // mac
+    "vim.autoSwitchInputMethod.defaultIM": "com.apple.keylayout.ABC",
+    "vim.autoSwitchInputMethod.obtainIMCmd": "/usr/local/bin/im-select",
+    "vim.autoSwitchInputMethod.switchIMCmd": "/usr/local/bin/im-select {im}",
+
+
+
 
     "vim.normalModeKeyBindings": [
         {
