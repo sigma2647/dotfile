@@ -24,8 +24,13 @@ function M.setup()
         scrolloff = 8,             -- 增加上下文可见行数
         timeoutlen = 300,          -- 减少键位映射等待时间
         updatetime = 100,          -- 更快的更新时间（对于 CursorHold 事件）
+        wrapscan = true,      -- 搜索到文件底部时从顶部继续搜索
+        virtualedit = "block" -- 在可视块模式下允许超出实际文本编辑
     }
     
+    for k, v in pairs(options) do
+      vim.opt[k] = v
+    end
 
     vim.g.mapleader = " "                                   -- 设置leader键为空格
     -- 常用键位映射
@@ -44,18 +49,21 @@ function M.setup()
     map('n', 'gr', [[<Cmd>call VSCodeNotify('editor.action.goToReferences')<CR>]])
     map('n', '<leader>rn', [[<Cmd>call VSCodeNotify('editor.action.rename')<CR>]])
     map('n', '<leader>ca', [[<Cmd>call VSCodeNotify('editor.action.quickFix')<CR>]])
-    
-    map('n', '<leader>h', [['editor.action.showDefinitionPreview']])   -- 预览定义
+
+    map('n', '<leader>ee', vscode_cmd('workbench.action.focusSideBar'))    -- 聚焦到文件树   
 
     -- 搜索相关
     map('n', '<leader>fw', [[<Cmd>call VSCodeNotify('workbench.action.findInFiles')<CR>]])
     map('n', '<leader>r', [[<Cmd>call VSCodeNotify('editor.action.startFindReplaceAction')<CR>]])
     map('n', '<leader>/', [[<Cmd>call VSCodeNotify('actions.find')<CR>]])
+    map('n', '*', vscode_cmd('editor.action.findWithSelection'))   -- 搜索当前选中文本
+    map('n', '<C-d>', vscode_cmd('editor.action.addSelectionToNextFindMatch')) -- 选中下一个匹配项
     
     -- 注释
     map('n', 'gcc', [[<Cmd>call VSCodeNotify('editor.action.commentLine')<CR>]])
     map('v', 'gc', [[<Cmd>call VSCodeNotify('editor.action.commentLine')<CR>]])
     map('v', '<C-n>', [[<Cmd>call VSCodeNotify('editor.action.addSelectionToNextFindMatch')<CR>]])
+
 
     map('n', '<leader>z', [[<Cmd>call VSCodeNotify('workbench.action.toggleZenMode')<CR>]])
 
@@ -65,7 +73,8 @@ function M.setup()
 
     map('n', '<leader>t', [[<Cmd>call VSCodeNotify('workbench.action.terminal.toggleTerminal')<CR>]])
     map('n', '<leader>a', [[<Cmd>call VSCodeNotify('workbench.action.toggleActivityBarVisibility')<CR>]])
-    map("n", "K", [[<Cmd>call VSCodeNotify('editor.action.showHover')<CR>]])
+    -- map("n", "K", [[<Cmd>call VSCodeNotify('editor.action.showHover')<CR>]])
+    map('n', 'K', vscode_cmd('editor.action.showHover'))
 
     map('n', '<TAB>', [[<Cmd>call VSCodeNotify('workbench.action.nextEditor')<CR>]])
     map('n', '<S-TAB>', [[<Cmd>call VSCodeNotify('workbench.action.previousEditor')<CR>]])
