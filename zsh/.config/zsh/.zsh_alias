@@ -2,7 +2,7 @@
 # │ alias │
 # └───────┘
 alias ls='ls --color'
-alias ll='ls -a'
+alias ll='ls -la'
 #alias v='nvim'
 alias v='nvim' alias vv='nvim'
 alias vo='goneovim'
