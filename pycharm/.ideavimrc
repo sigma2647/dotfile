@@ -1,0 +1,177 @@
+" ┌──────────────┐
+" │ idea plugins │
+" └──────────────┘
+" IdeaVimExtension
+
+"" Source your .vimrc
+"source ~/.vimrc
+"" -- Suggested options --
+" Show a few lines of context around the cursor. Note that this makes the
+" text scroll if you mouse-click near the start or end of the window.
+"
+"
+Plug 'tpope/vim-surround'
+Plug 'preservim/nerdntee'
+
+set scrolloff=5
+syntax on
+set number relativenumber
+set hlsearch
+set ignorecase
+set ignorecase smartcase
+set smartcase
+set nu
+set clipboard=unnamedplus "系统剪贴板
+set timeoutlen=350
+set visualbell
+set noerrorbells
+set keep-english-in-normal
+set which-key
+set notimeout
+
+
+
+
+
+""" The Leader Key
+
+
+" Do incremental searching.
+set incsearch
+
+" Don't use Ex mode, use Q for formatting.
+map Q :q<CR>
+imap jk <Esc>
+nmap S :w<cr>
+imap ; <Esc>
+imap ； <Esc>
+nmap \ :
+
+nmap H ^
+nmap L $
+
+" ┌─────────────┐
+" │ visual mode │
+" └─────────────┘
+
+vmap H ^
+vmap L $
+
+vmap p "_dP
+
+
+
+
+
+" ==================================================
+" 文件树
+" ==================================================
+"nnoremap <Leader>e :NERDTreeToggle<CR>
+" ==================================================
+" TAB导航
+" ==================================================
+nmap <TAB> gt
+nmap <S-TAB> gT
+nmap <C-w> :bd<CR>
+
+" ==================================================
+" 优化缩进
+" ==================================================
+vnoremap < <gv
+vnoremap > >gv
+
+" ==================================================
+" 多窗口操作
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-l> <Right>
+
+" Code Action
+vnoremap = :action ReformatCode<CR>
+
+"" -- Map IDE actions to IdeaVim -- https://jb.gg/abva4t
+"" Map \r to the Reformat Code actioj
+"map \r <Action>(ReformatCode)
+
+"" Map <leader>d to start debug
+"map <leader>d <Action>(Debug)
+
+"" Map \b to toggle the breakpoint on the current line
+"map \b <Action>(ToggleLineBreakpoint)
+
+
+" Find more examples here: https://jb.gg/share-ideavimr
+
+
+set NERDTree
+let g:NERDTreeMapActivateNode='l'
+let g:NERDTreeMapJumpParent='h'
+
+
+
+""" 导航 Navigated
+""" 让pycharm识别键位
+sethandler <c-j> a:vimrc
+sethandler <c-k> a:vimrc
+
+" ==================================================
+" 插入模式光标移动
+" ==================================================
+noremap <c-h> <c-w>h
+noremap <c-j> <c-w>j
+noremap <c-k> <c-w>k
+noremap <c-l> <c-w>l
+
+nnoremap `v :action SplitVertically<CR>
+nnoremap `b :action SplitHorizontally<CR>
+
+
+" ┌─────┐
+" │ lsp │
+" └─────┘
+nmap gt :action GotoTypeDeclaration<CR>
+
+
+
+" ┌───────────┐
+" │ leaderkey │
+" └───────────┘
+let mapleader = " "
+
+" Reload .ideavimr
+nmap <leader>s :source ~/.ideavimrc | echo "source complete"<CR>
+
+nmap <leader>E :e ~/.ideavimrc<CR>
+nmap <leader>h :nohlsearch<CR>
+
+" 查找文件
+let g:WhichKeyDesc_FindOrFormat_FindFile = "<leader>ff FindFile"
+nmap <leader>ff :action GotoFile<CR>
+
+
+let g:WhichKeyDesc_ToggleExplorerorExtract = "<leader>e ToggleExploreror"
+nmap <leader>e :action ActivateProjectToolWindow<CR>
+
+
+
+""" pycharm action
+nnoremap <Leader>o :action EditSourceInNewWindow<CR>
+nnoremap <Leader>n :action NextWindow<CR>
+""nnoremap <Leader>p :action GotoFile<CR>
+nnoremap <c-p> :action GotoFile<CR>
+nnoremap <c-z> :action ToggleDistractionFreeMode<CR>
+nnoremap ,r :action Run<CR>
+
+nnoremap <Leader>tt :action ActivateTerminalToolWindow<CR>
+""nnoremap <Leader>t :action Terminal.OpenInTerminal<CR>
+"NERDTreeToggle
+""nnoremap <Leader>e :action FileMenu<CR> "导航菜单
+nnoremap gp :action QuickJavaDoc<CR>
+nnoremap <Leader>k :action NotebookInsertCellAboveAction<CR>
+nnoremap <Leader>j :action NotebookInsertCellBelowAction<CR>
+nnoremap <Leader>fr :action RecentFiles<CR>
+nnoremap <Leader>fg :action FindInPath<CR>
+"Help action
+":actionlist git
+":actionlist *
+

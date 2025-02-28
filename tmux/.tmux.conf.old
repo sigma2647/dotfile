@@ -1,0 +1,71 @@
+# ────────────────────────────────────────────────────────
+# │ Base Settings
+# ────────────────────────────────────────────────────────
+set -g default-command $SHELL
+set -g default-shell $SHELL
+set -g mouse on
+set -g base-index 1           # 窗口编号从 1 开始计数
+set -g escape-time 0          # 关闭 ESC 延时
+set -g history-limit 1000000  # 历史记录数
+set -g renumber-windows on    # 关闭窗口后重新编号
+set -g set-clipboard on       # 系统剪贴板
+set -g status-position top    # 状态栏置顶
+
+# True Color 支持
+set -ga terminal-overrides ",*256col*:Tc"
+
+# ────────────────────────────────────────────────────────
+# │ Key Bindings  
+# ────────────────────────────────────────────────────────
+set-option -g prefix C-b
+set-option -g prefix2 `
+
+bind C-b send-prefix
+bind ` send-prefix -2
+
+bind h previous-window 
+bind l next-window
+bind r source-file ~/.tmux.conf \; display "配置已重新加载"
+bind : command-prompt
+bind x kill-pane
+bind t set status
+
+# 分割窗口
+bind b split-window -v -c '#{pane_current_path}'
+bind v split-window -h -c '#{pane_current_path}'
+bind c new-window -c "#{pane_current_path}"
+
+# Vim 风格
+set-window-option -g mode-keys vi
+bind-key -T copy-mode-vi H send -X start-of-line
+bind-key -T copy-mode-vi L send -X end-of-line
+bind-key -T copy-mode-vi Y send -X begin-selection \; send -X end-of-line \; send -X copy-selection-and-cancel
+bind-key -T copy-mode-vi 'v' send -X begin-selection
+bind-key -T copy-mode-vi 'y' send -X copy-selection
+unbind -T copy-mode-vi MouseDragEnd1Pane
+
+# Vim-tmux-navigator 配置
+is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
+    | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
+bind-key -n 'C-h' if-shell "$is_vim" 'send-keys C-h'  'select-pane -L'
+bind-key -n 'C-j' if-shell "$is_vim" 'send-keys C-j'  'select-pane -D'
+bind-key -n 'C-k' if-shell "$is_vim" 'send-keys C-k'  'select-pane -U'
+bind-key -n 'C-l' if-shell "$is_vim" 'send-keys C-l'  'select-pane -R'
+
+# ────────────────────────────────────────────────────────
+# │ Status Bar Style
+# ────────────────────────────────────────────────────────
+set -g status-style fg=white,bg=black
+set -g window-status-current-style fg=green,bg=black,bright
+set -g status-left-length 40
+set -g status-right-length 60
+
+set -g status-left '#[fg=green][#S] '
+set -g status-right '#[fg=yellow]%H:%M #[fg=white]#{b:pane_current_path}'
+
+set -g window-status-format "#[fg=white]#I:#W"
+set -g window-status-current-format "#[fg=green]#I:#W"
+
+# Pane 边框样式
+set -g pane-border-style fg=colour240
+set -g pane-active-border-style fg=green

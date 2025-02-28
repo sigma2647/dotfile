@@ -1,0 +1,349 @@
+{
+
+    "editor.inlineSuggest.enabled": true,
+    "editor.fontFamily": "'Maple Mono NL NF CN', 'JetBrainsMonoNL Nerd Font'",
+    "editor.fontSize": 18,
+    "editor.cursorBlinking": "solid",
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": true,
+    "explorer.compactFolders": false,
+    "editor.minimap.enabled": true,
+    "editor.minimap.autohide": true,
+    "editor.hideCursorInOverviewRuler": false,
+    "editor.lineNumbers": "relative",
+    "editor.renderLineHighlight": "line",
+    "terminal.integrated.fontSize": 17,
+    "terminal.integrated.inheritEnv": false,
+    // "files.autoSave": "onWindowChange",
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.fontFamily": "'Maple Mono NL NF CN', 'JetBrainsMonoNL Nerd Font'",
+    "markdown.preview.fontFamily": "'Maple Mono NL NF CN', 'JetBrainsMonoNL Nerd Font'",
+
+  "editor.fontFamily": "'Maple Mono NL NF CN', 'JetBrainsMonoNL Nerd Font'",
+    // 自动检测缩进的宽度
+    "editor.detectIndentation": false,
+
+    "chat.editor.fontSize": 17,
+    "editor.minimap.sectionHeaderFontSize": 18,
+    "editor.hideCursorInOverviewRuler": false,
+    "scm.inputFontSize": 16,
+    "markdown.preview.fontSize": 16,
+
+    // "workbench.list.keyboardNavigation": "simple",
+
+    "workbench.list.automaticKeyboardNavigation": false,
+
+    "extensions.experimental.affinity": {
+        "asvetliakov.vscode-neovim": 1
+    },
+
+    // markdown 的自动补全设置
+    "[markdown]": {
+        "editor.quickSuggestions": {
+          "other": "on",
+          "comments": "on",
+          "strings": "on"
+        }
+    },
+    "[lua]": {
+        "editor.tabSize": 2
+    },
+    "[nix]": {
+        "editor.tabSize": 2
+    },
+
+    "vim.incsearch": true,
+    "vim.useCtrlKeys": true,
+    "vim.enableNeovim": true,
+    "vim.hlsearch": true,
+    "vim.leader": " ",
+    "vim.smartRelativeLine": true,
+    "vim.useSystemClipboard": true,
+    "vim.highlightedyank.enable": true,
+    "vim.camelCaseMotion.enable": true,
+    "vim.autoSwitchInputMethod.enable": true,
+    "vim.cursorStylePerMode.insert": "line-thin",
+
+
+    // windows 
+    // "vim.autoSwitchInputMethod.defaultIM": "1033",
+    // "vim.autoSwitchInputMethod.obtainIMCmd": "D:\\lawrence\\im-select.exe",
+    // "vim.autoSwitchInputMethod.switchIMCmd": "D:\\lawrence\\im-select.exe {im}",
+    // mac
+    "vim.autoSwitchInputMethod.defaultIM": "com.apple.keylayout.ABC",
+    "vim.autoSwitchInputMethod.obtainIMCmd": "/usr/local/bin/im-select",
+    "vim.autoSwitchInputMethod.switchIMCmd": "/usr/local/bin/im-select {im}",
+
+
+
+
+    "vim.normalModeKeyBindings": [
+        {
+            "before": [
+                "\\"
+            ],
+            "commands": [
+                ":dd"
+            ]
+        },
+        {
+            "before": [
+                "<tab>"
+            ],
+            "commands": [
+                ":bnext"
+            ]
+        },
+        {
+            "before": [
+                "<s-tab>"
+            ],
+            "commands": [
+                ":bprevious"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "h"
+            ],
+            "commands": [
+                ":nohl"
+            ]
+        },
+        {
+            "before": [
+                "S"
+            ],
+            "after": [],
+            "commands": [
+                {
+                    "command": "workbench.action.files.save",
+                    "args": []
+                }
+            ]
+        },
+        {
+            "before": [
+                "Q"
+            ],
+            "after": [],
+            "commands": [
+                {
+                    "command": "workbench.action.closeActiveEditor",
+                    "args": []
+                }
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "e"
+            ],
+            "after": [],
+            "commands": [
+                {
+                    "command": "workbench.action.toggleSidebarVisibility",
+                    "args": []
+                }
+            ]
+        },
+        {
+            "before": "Ctrl+\\",
+            "after": [],
+            "commands": [
+                {
+                    "command": "workbench.action.terminal.toggleTerminal",
+                    "args": []
+                }
+            ]
+        },
+        {
+            "before": [
+                "g",
+                "r"
+            ],
+            "commands": [
+                "editor.action.referenceSearch.trigger"
+            ]
+        },
+        {
+            "before": [
+                "Y"
+            ],
+            "after": [
+                "y",
+                "$"
+            ]
+        },
+        {
+            "before": [
+                "H"
+            ],
+            "after": [
+                "^"
+            ]
+        },
+        {
+            "before": [
+                "L"
+            ],
+            "after": [
+                "$"
+            ]
+        },
+        {
+            "before": [
+                "`b"
+            ],
+            "after": [
+                ":vs"
+            ]
+        },
+        {
+            "before": [
+                "u"
+            ],
+            "commands": [
+                {
+                    "command": "undo"
+                }
+            ]
+        },
+        {
+            "before": [
+                "<C-r>"
+            ],
+            "commands": [
+                {
+                    "command": "redo"
+                }
+            ]
+        }
+    ],
+
+    "vim.insertModeKeyBindings": [
+        {
+            "before": [
+                "<C-b>"
+            ],
+            "commands": [
+                "cursorLeft"
+            ]
+        },
+        {
+            "before": [
+                "<c-f>"
+            ],
+            "commands": [
+                "cursorRight"
+            ]
+        },
+        {
+            "before": [],
+            "commands": [
+                "cursorEnd"
+            ]
+        },
+        {
+            "before": [
+                "<C-a>"
+            ],
+            "commands": [
+                "cursorHome"
+            ]
+        },
+        {
+            "before": [
+                ";"
+            ],
+            "after": [
+                "<Esc>"
+            ]
+        },
+        {
+            "before": [
+                "j",
+                "j"
+            ],
+            "after": [
+                "<Esc>"
+            ]
+        },
+        {
+            "before": [
+                "j",
+                "k"
+            ],
+            "after": [
+                "<Esc>"
+            ]
+        }
+    ],
+
+    "vim.visualModeKeyBindings": [
+        {
+            "before": [
+                ">"
+            ],
+            "commands": [
+                "editor.action.indentLines"
+            ]
+        },
+        {
+            "before": [
+                "<"
+            ],
+            "commands": [
+                "editor.action.outdentLines"
+            ]
+        },
+        {
+            "before": [
+                "p"
+            ],
+            "after": [
+                "p",
+                "g",
+                "v",
+                "y"
+            ]
+        },
+        {
+            "before": [
+                "H"
+            ],
+            "after": [
+                "^"
+            ]
+        },
+        {
+            "before": [
+                "L"
+            ],
+            "after": [
+                "$"
+            ]
+        }
+    ],
+
+    "files.defaultLanguage": "",
+    "extensions.experimental.affinity": {
+        "asvetliakov.vscode-neovim": 1
+    },
+    "security.allowedUNCHosts": [
+        "192.168.1.222"
+    ],
+    "security.workspace.trust.untrustedFiles": "open",
+    "workbench.editorAssociations": {
+        "*.docx": "default"
+    },
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+    "editor.largeFileOptimizations": false,
+    "Lingma.cloudModelAutoTriggerGenerateLength": "medium",
+    "debug.console.fontSize": 15,
+    "git.openRepositoryInParentFolders": "never",
+    "workbench.colorTheme": "Deepdark Material Theme | Full Black Version",
+}

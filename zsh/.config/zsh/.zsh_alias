@@ -1,0 +1,93 @@
+# ┌───────┐
+# │ alias │
+# └───────┘
+alias ls='ls --color'
+alias ll='ls -la'
+#alias v='nvim'
+alias v='nvim' alias vv='nvim'
+alias vo='goneovim'
+alias nv='neovide'
+#alias v='vimr'
+alias ra='ranger'
+alias enableproxy='export export http_proxy=http://127.0.0.1:1087;export https_proxy=http://127.0.0.1:1087;' # 设置终端代理
+alias enableproxyMini='export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890'  # clash
+alias ff='fastfetch'
+#alias enableproxyMini='export https_proxy=http://127.0.0.1:33210 http_proxy=http://127.0.0.1:33210 all_proxy=socks5://127.0.0.1:33211'  # sdyun
+#
+alias oo="cd $HOME/note/sigma"
+
+alias disableproxy='unset http_proxy https_proxy' # 取消终端代理
+alias t='tmux'
+alias ta='tmux attach'
+alias c='z'
+alias vpython='ipython --TerminalInteractiveShell.editing_mode=vi'
+alias g='lazygit'
+alias jp='jupyter'
+alias dot='cd ~/dotfile'
+#alias lv=$HOME'/.local/bin/lvim'
+alias lv=lvim
+
+alias math="python ~/play/math1.py"
+alias l=y
+alias e='emacs'
+# ┌───────┐
+# │ emacs │
+# └───────┘
+
+alias emacs1='emacs -q -l ~/.emacs1.d/init.el'
+alias emacs2='emacs -q -l ~/.emacs.d.evan/init.el'
+alias emacs3='emacs -q -l ~/.emacs3.d/init.el'
+alias emacs_doom='emacs -q -l ~/.emacs.d.doom/early-init.el'
+
+# ┌────────┐
+# │ pacman │
+# └────────┘
+alias in='sudo pacman -S' # install package
+alias un='sudo pacman -Rns' # uninstall package
+alias up='sudo pacman -Syu' # update system/package/aur
+alias pl='pacman -Qs' # list installed package
+alias pa='pacman -Ss' # list availabe package
+
+
+
+# ┌─────┐
+# │ zed │
+# └─────┘
+alias z='zeditor'
+alias z='zed'
+
+
+# ┌──────┐
+# │ note │
+# └──────┘
+alias note='note'
+
+
+
+# Check if exa is installed
+if command -v lsd &> /dev/null
+then
+    # If exa is installed, create an alias for ls
+    alias ls='lsd'
+#else
+    # If exa is not installed, use the original ls command
+    #alias ls='ls'
+fi
+
+
+# Check if rg is installed
+if command -v rg &> /dev/null
+then
+    # If rg is installed, create an alias for rg
+    alias grep='rg'
+fi
+
+
+
+# Check if bat is installed
+if command -v bat &> /dev/null
+then
+    # If rg is installed, create an alias for rg
+    alias cat='bat'
+fi
+

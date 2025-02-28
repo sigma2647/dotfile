@@ -1,0 +1,8 @@
+import pandas as pd
+import numpy as np
+import visidata as vd
+
+
+
+vd = vd.view_pandas
+~/dotfile/ipython/.ipython/profile_default/startup

@@ -1,0 +1,4 @@
+visidata == 2.6.1
+pyflyby  == 1.7.4
+ipython == 8.1.1
+pynvim

@@ -1,0 +1,53 @@
+# History configuration
+HISTSIZE=5000
+SAVEHIST=$HISTSIZE
+HISTFILE=~/.zsh_history
+
+# 启用扩展历史记录和设置时间戳格式
+setopt EXTENDED_HISTORY
+# HIST_STAMPS="%F %T"
+HIST_STAMPS="%y-%m-%d %H:%M:%S"   # 显示为 YY-MM-DD HH:MM:SS
+
+# 其他历史记录选项
+setopt appendhistory
+setopt sharehistory # 多命令行共享命令
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_find_no_dups
+
+setopt correct
+setopt autocd
+
+
+
+
+# Completion styling
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu select
+
+# 关闭终端铃声
+setopt NO_BEEP
+
+# 为每个命令前增加空行（可选）
+precmd() { print "" }
+
+# 加载自动补全功能
+autoload -Uz compinit
+compinit
+
+# 其他配置
+setopt PROMPT_SUBST
+stty -ixon
+
+# ┌─────┐
+# │ Man │
+# └─────┘
+
+export MANPAGER="nvim +Man!"
+
+
+export TERM=xterm-256color
+

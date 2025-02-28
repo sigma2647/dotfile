@@ -1,0 +1,4 @@
+[[index]]
+#url = "https://test.pypi.org/simple"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+default = true

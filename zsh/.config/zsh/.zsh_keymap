@@ -1,0 +1,23 @@
+# LFCD="$HOME/.config/lf/lfcd.sh"                                #  pre-built binary, make sure to use absolute path
+# if [ -f "$LFCD" ]; then
+#     source "$LFCD"
+# fi
+#
+#bindkey -s '^o' 'lfcd\n'  # zsh
+bindkey -s '^o' 'yy\n'  # zsh
+
+# 开启emacs 按键
+bindkey -e
+bindkey '^[[Z' reverse-menu-complete  # 绑定 Shift-Tab 到反向菜单补全
+
+bindkey '^p' history-search-backward
+bindkey '^n' history-search-forward
+
+
+autoload -z edit-command-line
+zle -N edit-command-line
+
+bindkey '^x^e' edit-command-line
+
+
+

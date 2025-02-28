@@ -1,0 +1,16 @@
+
+# ┌─────┐
+# │ fzf │
+# └─────┘
+# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# eval "$(fzf --zsh)"
+
+eval "$(zoxide init --cmd cd zsh)"
+eval "$(zoxide init zsh)"
+
+eval "$(starship init zsh)"
+
+eval "$(direnv hook zsh)"   # 如果你使用 zsh
+# eval $(thefuck --alias)
+
+# eval "$(atuin init zsh)"

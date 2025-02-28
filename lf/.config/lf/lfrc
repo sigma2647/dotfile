@@ -1,0 +1,58 @@
+# Basic Setting
+set hidden true
+set ignorecase true
+set icons true
+
+
+# Set lf to raanger like keybindings
+
+
+
+map gd cd ~/Downloads
+map gD cd ~/dotfile
+map gm cd ~/quant_alpha_v5
+map gf cd ~/quant_alpha_v5/notebook/factor/factors_tomato
+map gp cd ~/play
+map gc cd ~/.config
+map gv cd ~/.config/nvim
+map go cd ~/note/sigma/
+map . set hidden!
+
+map <c-g> push :shell<enter>lazygit<enter>  # 打开当前路径
+
+map <enter> shell
+
+# leave some space at the top and the bottom of the screen
+# set scrolloff 1
+
+
+
+map gU unzip -o  # 解压文件
+
+
+cmd mkdir ${{
+    printf "Enter a directory name: "
+    read ans
+    mkdir $ans
+}}
+
+cmd mkfile ${{
+  printf "Enter a File Name: "
+  read ans
+  $EDITOR $ans
+}}
+
+
+map a mkdir
+map A mkfile
+map D delete  # 删除文件或目录
+map x cut
+map o ${{open .}}
+
+map R $vimv $fx
+
+
+# TODO : Add more keybindings
+# TODO : add unzip command
+# TODO : add unrar command
+# TODO : add tar command

@@ -1,0 +1,59 @@
+# background = ffffff
+# foreground = ffffff
+
+keybind = global:cmd+\=toggle_quick_terminal
+# keybind = global:super+shift+]=toggle_quick_terminal
+
+quick-terminal-position = right
+quick-terminal-animation-duration = 0
+quick-terminal-screen = main
+
+
+cursor-style = block
+
+theme = rose-pine
+background = #000000
+background-opacity = 0.65
+background-blur-radius = 15
+
+
+background-opacity = 0.8
+
+cursor-style = block
+cursor-style-blink = false
+cursor-invert-fg-bg = true
+
+font-size = 17
+font-family = Maple Mono NL NF CN Regular
+
+
+macos-titlebar-style = hidden
+mouse-hide-while-typing = true
+
+
+confirm-close-surface = false
+window-decoration = false
+window-padding-x = 10
+window-padding-y = 10
+# window-padding-balance = true
+
+
+
+# Similar Tmux but with Ghostty
+# (ctrl b for tmux -> cmb b for ghostty)
+keybind = super+b>r=reload_config
+keybind = super+b>x=close_surface
+# this only works if you have `macos-titlebar-style = tabs or native or transparent`
+# else it behaves like new window
+keybind = super+b>c=new_tab 
+keybind = super+b>n=new_window
+
+# extras
+shell-integration-features = no-cursor 
+copy-on-select = clipboard
+
+
+
+keybind = ctrl+m=text:\x0D
+keybind = ctrl+i=text:\x09
+keybind = ctrl+[=text:\x1B

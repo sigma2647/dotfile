@@ -1,0 +1,12 @@
+**/__pycache__/
+/.idea/
+*/__pycache__
+.DS_Store
+.DS_Store
+/.DS_Store
+zsh/.config/lazygit/
+zsh/.config/nvim/
+zsh/.config/htop
+elpaca
+zsh-autosuggestions
+zsh-syntax-highlighting
