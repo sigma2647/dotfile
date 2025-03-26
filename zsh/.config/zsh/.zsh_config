@@ -49,5 +49,5 @@ stty -ixon
 export MANPAGER="nvim +Man!"
 
 
-export TERM=xterm-256color
+# export TERM=xterm-256color
 
