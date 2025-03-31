@@ -11,7 +11,7 @@ quick-terminal-screen = main
 
 cursor-style = block
 
-theme = rose-pine
+# theme = rose-pine
 background = #000000
 background-opacity = 0.65
 background-blur-radius = 15
