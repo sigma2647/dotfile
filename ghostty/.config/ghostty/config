@@ -23,7 +23,7 @@ cursor-style = block
 cursor-style-blink = false
 cursor-invert-fg-bg = true
 
-font-size = 17
+font-size = 16
 font-family = Maple Mono NL NF CN Regular
 
 
