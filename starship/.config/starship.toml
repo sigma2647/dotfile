@@ -2,7 +2,6 @@ command_timeout = 1000
 
 "$schema" = 'https://starship.rs/config-schema.json'
 
-add_newline = true
 
 format = """
  ➜\
@@ -19,6 +18,8 @@ right_format = """$all"""
 
 palette = "catppuccin_mocha"
 
+
+add_newline = false
 [palettes.catppuccin_mocha]
 rosewater = "#f5e0dc"
 flamingo = "#f2cdcd"
@@ -206,8 +207,8 @@ time_format = "%R"
 style = "bg:peach"
 format = '[[  $time ](fg:mantle bg:foam)]($style)'
 
-[line_break]
-disabled = true 
+# [line_break]
+# disabled = true 
 
 [character]
 disabled = false
