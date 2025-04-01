@@ -23,3 +23,12 @@ export proxy="192.168.10.34:7890"
 
 
 export PATH="/Library/TeX/texbin:$PATH"
+
+
+alias cs='() {
+  local tmpfile=$(mktemp)
+  curl -sSL "https://gitee.com/funnyzak/cli-cheatsheets/raw/main/cheatsheet.sh" -o "$tmpfile" && chmod +x "$tmpfile" && "$tmpfile" "$@" && rm -f "$tmpfile"
+}'
+
+
+
