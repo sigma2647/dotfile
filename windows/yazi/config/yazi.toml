@@ -1,0 +1,19 @@
+[manager]
+show_hidden = false
+
+[[opener.edit]]
+block = true
+for = "unix"
+run = "$EDITOR \"$@\""
+
+[[opener.edit]]
+block = true
+desc = "nvim"
+for = "windows"
+run = "nvim %*"
+
+[preview]
+max_height = 1000
+max_width = 1000
+
+
