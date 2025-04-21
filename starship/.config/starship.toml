@@ -1,4 +1,4 @@
-command_timeout = 1000
+command_timeout = 500
 
 "$schema" = 'https://starship.rs/config-schema.json'
 
@@ -111,8 +111,9 @@ RedHatEnterprise = "󱄛"
 [directory]
 style = "sapphire"
 format = "[ $path ]($style)"
-#truncation_length = 4
-#truncation_symbol = "…/"
+truncation_length = 3
+truncation_symbol = "…/"
+truncate_to_repo = true
 
 [directory.substitutions]
 "Documents" = "󰈙 "
