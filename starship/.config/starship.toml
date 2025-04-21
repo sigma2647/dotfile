@@ -14,6 +14,8 @@ $line_break\
 $character
 """
 
+
+
 right_format = """$all"""
 
 palette = "catppuccin_mocha"
@@ -82,25 +84,28 @@ crust = "#11111b"
 # crust = "#11111b"
 
 [os.symbols]
-Windows = "󰍲"
-Ubuntu = "󰕈"
-SUSE = ""
-Raspbian = "󰐿"
-Mint = "󰣭"
-Macos = " "
-Manjaro = ""
-Linux = "󰌽"
-Gentoo = "󰣨"
-Fedora = "󰣛"
-Alpine = ""
-Amazon = ""
-Android = ""
-Arch = "󰣇"
-Artix = "󰣇"
-CentOS = ""
-Debian = "󰣚"
-Redhat = "󱄛"
-RedHatEnterprise = "󱄛"
+Windows = "󰍲 "
+Ubuntu = "󰕈 "
+SUSE = " "
+Raspbian = "󰐿 "
+Mint = "󰣭 "
+Macos = " "
+Manjaro = " "
+Linux = "󰌽 "
+Gentoo = "󰣨 "
+Fedora = "󰣛 "
+Alpine = " "
+Amazon = " "
+Android = " "
+Arch = "󰣇 "
+Artix = "󰣇 "
+CentOS = " "
+Debian = "󰣚 "
+Redhat = "󱄛 "
+RedHatEnterprise = "󱄛 "
+NixOS = " "
+
+
 
 [username]
 #show_always = true
@@ -122,9 +127,16 @@ truncate_to_repo = true
 "Pictures" = " "
 "Developer" = "󰲋 "
 
-[os]
-disabled = true
+# [os]
+# disabled = true
 #style = "bg:surface0 fg:text"
+
+
+[os]
+disabled = false
+style = "fg:subtext0"
+format = "[$symbol]($style)"
+
 
 [custom.giturl]
 # disabled = true
@@ -154,7 +166,9 @@ style = "fg:lavender bg:black"
 format =  '  on [$symbol$branch]($style)[](black)'
 
 [git_status]
+style = "fg:peach"
 format = ' [($all_status$ahead_behind )]($style)'
+
 
 [nodejs]
 symbol = ""
@@ -215,7 +229,7 @@ format = '[[  $time ](fg:mantle bg:foam)]($style)'
 disabled = false
 success_symbol = '[𝘹](bold fg:green)'
 error_symbol = '[𝘹](bold fg:red)'
-vimcmd_symbol = '[](bold fg:creen)'
+vimcmd_symbol = '[](bold fg:green)'  # 应为 green
 vimcmd_replace_one_symbol = '[](bold fg:purple)'
 vimcmd_replace_symbol = '[](bold fg:purple)'
 vimcmd_visual_symbol = '[](bold fg:lavender)'
