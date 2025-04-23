@@ -76,11 +76,11 @@ fi
 
 
 # Check if rg is installed
-if command -v rg &> /dev/null
-then
-    # If rg is installed, create an alias for rg
-    alias grep='rg'
-fi
+# if command -v rg &> /dev/null
+# then
+#     # If rg is installed, create an alias for rg
+#     alias grep='rg'
+# fi
 
 
 
