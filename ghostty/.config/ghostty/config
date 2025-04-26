@@ -49,7 +49,6 @@ keybind = super+b>n=new_window
 
 # extras
 shell-integration-features = no-cursor 
-copy-on-select = clipboard
 
 
 
