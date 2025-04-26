@@ -39,3 +39,9 @@ export PATH=$HOME/.config/emacs/bin:$PATH
 
 source $HOME/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $HOME/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+
+# ┌────────┐
+# │ nix_ld │
+# └────────┘
+export LD_LIBRARY_PATH=$NIX_LD_LIBRARY_PATH
