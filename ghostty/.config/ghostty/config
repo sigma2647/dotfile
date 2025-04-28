@@ -30,16 +30,18 @@ font-family = Maple Mono NF CN
 mouse-hide-while-typing = true
 
 
+# 基础设置
 confirm-close-surface = false
 window-decoration = false
 window-padding-x = 10
 window-padding-y = 10
 # window-padding-balance = true
 
+# 启用背景模糊
+background-blur = true
 
 
 # Similar Tmux but with Ghostty
-# (ctrl b for tmux -> cmb b for ghostty)
 keybind = super+b>r=reload_config
 keybind = super+b>x=close_surface
 # this only works if you have `macos-titlebar-style = tabs or native or transparent`
@@ -47,11 +49,12 @@ keybind = super+b>x=close_surface
 keybind = super+b>c=new_tab 
 keybind = super+b>n=new_window
 
-# extras
-shell-integration-features = no-cursor 
+# 额外设置
+shell-integration-features = no-cursor
 
 
 
+# 控制特殊按键
 keybind = ctrl+m=text:\x0D
 keybind = ctrl+i=text:\x09
 keybind = ctrl+[=text:\x1B
