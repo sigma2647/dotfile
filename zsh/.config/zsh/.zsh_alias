@@ -30,6 +30,7 @@ alias lv=lvim
 alias math="python ~/play/math1.py"
 alias l=y
 alias e='emacs'
+alias pc='proxychains4'
 # ┌───────┐
 # │ emacs │
 # └───────┘
