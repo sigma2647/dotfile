@@ -31,7 +31,7 @@ mouse-hide-while-typing = true
 
 
 confirm-close-surface = false
-window-decoration = true
+window-decoration = false
 window-padding-x = 10
 window-padding-y = 10
 # window-padding-balance = true
