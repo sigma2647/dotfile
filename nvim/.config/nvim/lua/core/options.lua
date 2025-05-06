@@ -33,6 +33,7 @@ vim.opt.smartcase = true
 vim.opt.incsearch = true				-- enable incremental searching
 vim.opt.wrap = true						-- 开启换行
 vim.opt.fileencoding = "utf-8"
+vim.opt.fillchars = {eob = " "}
 
 
 vim.api.nvim_set_hl(0, "Normal", { bg = "none"})
