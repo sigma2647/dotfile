@@ -24,6 +24,7 @@ alias vpython='ipython --TerminalInteractiveShell.editing_mode=vi'
 alias g='lazygit'
 alias jp='jupyter'
 alias dot='cd ~/dotfile'
+alias open='xdg-open'
 #alias lv=$HOME'/.local/bin/lvim'
 alias lv=lvim
 
