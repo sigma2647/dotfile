@@ -58,5 +58,15 @@
         "is_default_search": true,
         "run_without_argument": false,
         "added": 1746605550.5075812
+    },
+    "082fccde-f405-4b68-bfa4-5a064d40585e": {
+        "id": "082fccde-f405-4b68-bfa4-5a064d40585e",
+        "name": "\u641c\u72d7",
+        "keyword": "s",
+        "cmd": "https://sogou.com/sohu/sohu?query=%s",
+        "icon": null,
+        "is_default_search": true,
+        "run_without_argument": false,
+        "added": 1746786140.2249622
     }
 }
