@@ -34,7 +34,7 @@
         "name": "perplexity",
         "keyword": "p",
         "cmd": "https://www.perplexity.ai/?q=%s",
-        "icon": "~/Pictures/svg/perplexity.svg",
+        "icon": "~/dotfile/icon/perplexity.svg",
         "is_default_search": true,
         "run_without_argument": false,
         "added": 1746603863.8709524
@@ -44,7 +44,7 @@
         "name": "github",
         "keyword": "g",
         "cmd": "https://github.com/search?q=%s",
-        "icon": "~/Pictures/svg/github.svg",
+        "icon": "~/dotfile/icon/github.svg",
         "is_default_search": true,
         "run_without_argument": false,
         "added": 1746603915.8898563
@@ -54,7 +54,7 @@
         "name": "bilibili",
         "keyword": "b",
         "cmd": "https://search.bilibili.com/all?keyword=%s",
-        "icon": "~/Pictures/svg/bilibili.svg",
+        "icon": "~/dotfile/icon/bilibili.svg",
         "is_default_search": true,
         "run_without_argument": false,
         "added": 1746605550.5075812
