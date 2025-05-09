@@ -1,19 +1,22 @@
--- lua/core/init.lua
+-- lua/config/init.lua
 local M = {}
 
 function M.setup()
-
-  require('modules.terminal').setup({
+  -- 终端配置
+  require("modules.terminal").setup({
     height = 15,
-    position = 'botright',
-    mapping = '<C-\\>',
-    direction = 'horizontal',
+    position = "botright",
+    mapping = "<C-\\>",
+    direction = "horizontal",
     hide_numbers = true,
-    buffer_name = 'Terminal'
+    buffer_name = "Terminal"
   })
 
-  require('modules.filetree').setup()
+  -- 文件树配置
+  require("modules.filetree").setup()
 
+  -- 输入法切换配置
+  require("modules.input").setup()
 end
 
 return M
