@@ -11,6 +11,7 @@ vim.opt.title = true                                  -- 显示标题
 vim.opt.number = true                                 -- 显示行号
 vim.opt.relativenumber = true                         -- 显示相对行号
 vim.opt.cursorlineopt = 'both'                        -- 光标行高亮
+vim.opt.cursorcolumn = true                           -- 光标列高亮
 vim.opt.scrolloff = 6                                 -- 光标距离顶部/底部的行数
 vim.opt.sidescrolloff = 3                             -- 光标距离左右边界的列数
 vim.opt.wrap = true                                   -- 自动换行
