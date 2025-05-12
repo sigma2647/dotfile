@@ -33,20 +33,17 @@ vim.g.noswapfile = 1                                  -- 不创建交换文件
 vim.opt.lazyredraw = true                            -- 延迟重绘，提高性能
 vim.opt.updatetime = 300                             -- 减少更新延迟
 
--- 文件浏览器设置
+-- 文件浏览器设置（优化性能）
 vim.g.netrw_banner = 0                               -- 关闭 netrw 横幅
-vim.g.netrw_altv = 1                                 -- 右侧分割
 vim.g.netrw_liststyle = 3                            -- 树形视图
-vim.g.netrw_winsize = 25                            -- 设置窗口宽度
-vim.g.netrw_preview = 1                             -- 垂直分割时在右侧预览
-vim.g.netrw_alto = 1                                -- 水平分割时在下方预览
-vim.g.netrw_hide = 1                                -- 隐藏隐藏文件
-vim.g.netrw_list_hide = [[\(^\|\s\s\)\zs\.\S\+]]   -- 隐藏以点开头的文件
-vim.g.netrw_keepdir = 1                             -- 保持当前目录
-vim.g.netrw_special_syntax = 1                      -- 启用特殊语法高亮
-vim.g.netrw_localcopydircmd = 'cp -r'              -- 复制目录命令
-vim.g.netrw_localmkdir = 'mkdir -p'                -- 创建目录命令
-vim.g.netrw_localrmdir = 'rm -rf'                  -- 删除目录命令
+vim.g.netrw_browse_split = 4                         -- 在之前的窗口中打开文件
+vim.g.netrw_altv = 1                                 -- 右侧分割
+vim.g.netrw_fastbrowse = 2                           -- 快速浏览
+vim.g.netrw_silent = 1                               -- 减少提示信息
+vim.g.netrw_keepdir = 0                              -- 不保持当前目录
+vim.g.netrw_hide = 1                                 -- 隐藏隐藏文件
+vim.g.netrw_list_hide = [[\(^\|\s\s\)\zs\.\S\+]]    -- 隐藏以点开头的文件
+vim.g.netrw_special_syntax = 0                       -- 禁用特殊语法高亮以提高性能
 
 -- 语法高亮
 vim.opt.syntax = "enable"                            -- 启用语法高亮

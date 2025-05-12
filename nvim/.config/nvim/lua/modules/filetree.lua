@@ -42,21 +42,25 @@ local function open_tree()
     filetype = 'filetree',
   }
   
-  for opt, value in pairs(win_opts) do
-    vim.api.nvim_win_set_option(tree_winnr, opt, value)
-  end
+  -- 批量设置选项以提高性能
+  vim.api.nvim_win_set_option(tree_winnr, 'number', false)
+  vim.api.nvim_win_set_option(tree_winnr, 'relativenumber', false)
+  vim.api.nvim_win_set_option(tree_winnr, 'wrap', false)
+  vim.api.nvim_win_set_option(tree_winnr, 'signcolumn', 'no')
+  vim.api.nvim_win_set_option(tree_winnr, 'foldcolumn', '0')
+  vim.api.nvim_win_set_option(tree_winnr, 'cursorcolumn', false)
+  vim.api.nvim_win_set_option(tree_winnr, 'cursorline', true)
+  vim.api.nvim_win_set_option(tree_winnr, 'colorcolumn', '0')
   
-  for opt, value in pairs(buf_opts) do
-    vim.api.nvim_buf_set_option(tree_bufnr, opt, value)
-  end
+  vim.api.nvim_buf_set_option(tree_bufnr, 'buftype', 'nofile')
+  vim.api.nvim_buf_set_option(tree_bufnr, 'bufhidden', 'wipe')
+  vim.api.nvim_buf_set_option(tree_bufnr, 'buflisted', false)
+  vim.api.nvim_buf_set_option(tree_bufnr, 'swapfile', false)
+  vim.api.nvim_buf_set_option(tree_bufnr, 'modifiable', false)
+  vim.api.nvim_buf_set_option(tree_bufnr, 'filetype', 'filetree')
   
-  -- 打开netrw并隐藏横幅
+  -- 打开netrw
   vim.cmd('Ex')
-  vim.g.netrw_banner = 0
-  vim.g.netrw_liststyle = 3  -- 树状显示
-  vim.g.netrw_browse_split = 4  -- 在之前的窗口中打开文件
-  vim.g.netrw_winsize = width
-  vim.g.netrw_altv = 1  -- 分割窗口位于右侧
 end
 
 -- 切换文件树显示
@@ -72,6 +76,17 @@ end
 
 -- 设置键位映射和自动命令
 function M.setup()
+  -- 设置netrw全局选项
+  vim.g.netrw_banner = 0                    -- 关闭横幅
+  vim.g.netrw_liststyle = 3                 -- 树形视图
+  vim.g.netrw_browse_split = 4              -- 在之前的窗口中打开文件
+  vim.g.netrw_altv = 1                      -- 右侧分割
+  vim.g.netrw_fastbrowse = 2                -- 快速浏览
+  vim.g.netrw_silent = 1                    -- 减少提示信息
+  vim.g.netrw_keepdir = 0                   -- 不保持当前目录
+  vim.g.netrw_hide = 1                      -- 隐藏隐藏文件
+  vim.g.netrw_list_hide = [[\(^\|\s\s\)\zs\.\S\+]]  -- 隐藏以点开头的文件
+  
   -- 设置快捷键
   vim.keymap.set('n', '<leader>e', function()
     M.toggle()
