@@ -1,31 +1,22 @@
 Set-PSReadLineOption -EditMode Emacs
 
-Set-Alias -Name open -Value explorer.exe
-
-Set-Alias -Name g -Value lazygit
-
-Set-Alias -Name l -Value y
-
-Set-Alias -Name v -Value nvim
-Set-Alias -Name vim -Value nvim
+Set-Alias open explorer.exe
+# Set-Alias open start
+Set-Alias g lazygit
+Set-Alias l y
+Set-Alias v nvim
+Set-Alias vim nvim
+Set-Alias which where.exe
+Set-Alias grep  findstr
 
 
 Set-PSReadLineOption -PredictionSource History
 Set-PSReadLineOption -ShowToolTips
 Set-PSReadLineOption -BellStyle None
 
-function goto-note {
-    Set-Location -Path "$HOME\note\sigma"
-}
-
-function goto-dotfile {
-    Set-Location -Path "$HOME\dotfile"
-}
 
 # function goto-projects { Set-Location -Path "D:\Projects" }
 
-Set-Alias -Name oo -Value goto-note
-Set-Alias -Name dot -Value goto-dotfile
 # Set-Alias -Name gp -Value goto-projects
 
 function lfcd {
@@ -47,6 +38,24 @@ $env:EDITOR = "nvim"
 $env:VISUAL = "nvim"
 
 
+
+# Network Proxy Switcher
+function Set-Proxy {
+    param (
+        [string]$HostIp = "127.0.0.1",
+        [int]$Port = 7897 # Clash Verge
+    )
+    $env:http_proxy = "http://${HostIp}:$Port"
+    $env:https_proxy = "http://${HostIp}:$Port"
+    Write-Host "--[ Set Network Proxy! Value: HostIp = $HostIp , Port = $Port ]--"
+}
+function Remove-Proxy {
+    Remove-Item Env:http_proxy -ErrorAction SilentlyContinue
+    Remove-Item Env:https_proxy -ErrorAction SilentlyContinue
+    Write-Host "--[ Remove Network Proxy! ]--"
+}
+
+
 function y {
     $tmp = [System.IO.Path]::GetTempFileName()
     yazi $args --cwd-file="$tmp"
@@ -56,5 +65,34 @@ function y {
     }
     Remove-Item -Path $tmp
 }
+
+
+function goto-note {
+    Set-Location -Path "$HOME\note\sigma"
+}
+Set-Alias -Name oo -Value goto-note
+
+function goto-dotfile {
+    Set-Location -Path "$HOME\dotfile"
+}
+Set-Alias -Name dot -Value goto-dotfile
+
+
+
+function Set-Proxy {
+    param (
+        [string]$HostIp = "127.0.0.1",
+        [int]$Port = 7897 # Clash Verge
+    )
+    $env:http_proxy = "http://${HostIp}:$Port"
+    $env:https_proxy = "http://${HostIp}:$Port"
+    Write-Host "--[ Set Network Proxy! Value: HostIp = $HostIp , Port = $Port ]--"
+}
+function Remove-Proxy {
+    Remove-Item Env:http_proxy -ErrorAction SilentlyContinue
+    Remove-Item Env:https_proxy -ErrorAction SilentlyContinue
+    Write-Host "--[ Remove Network Proxy! ]--"
+}
+
 
 
