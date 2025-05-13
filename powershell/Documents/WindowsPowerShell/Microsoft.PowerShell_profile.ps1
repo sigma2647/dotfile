@@ -12,6 +12,7 @@ Set-Alias -Name vim -Value nvim
 
 Set-PSReadLineOption -PredictionSource History
 Set-PSReadLineOption -ShowToolTips
+Set-PSReadLineOption -BellStyle None
 
 function goto-note { Set-Location -Path "$HOME\note\sigma" }
 function goto-dotfile { Set-Location -Path "$HOME\dotfile" }
