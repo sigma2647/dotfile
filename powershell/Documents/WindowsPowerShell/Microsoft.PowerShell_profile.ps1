@@ -39,21 +39,6 @@ $env:VISUAL = "nvim"
 
 
 
-# Network Proxy Switcher
-function Set-Proxy {
-    param (
-        [string]$HostIp = "127.0.0.1",
-        [int]$Port = 7897 # Clash Verge
-    )
-    $env:http_proxy = "http://${HostIp}:$Port"
-    $env:https_proxy = "http://${HostIp}:$Port"
-    Write-Host "--[ Set Network Proxy! Value: HostIp = $HostIp , Port = $Port ]--"
-}
-function Remove-Proxy {
-    Remove-Item Env:http_proxy -ErrorAction SilentlyContinue
-    Remove-Item Env:https_proxy -ErrorAction SilentlyContinue
-    Write-Host "--[ Remove Network Proxy! ]--"
-}
 
 
 function y {
