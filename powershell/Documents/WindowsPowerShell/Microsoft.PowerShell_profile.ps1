@@ -1,6 +1,6 @@
 Set-PSReadLineOption -EditMode Emacs
 
-Set-Alias open explorer.exe
+# Set-Alias open explorer.exe
 # Set-Alias open start
 Set-Alias g lazygit
 Set-Alias l y
@@ -9,6 +9,11 @@ Set-Alias vim nvim
 Set-Alias which where.exe
 Set-Alias grep  findstr
 
+function clear { cls }
+function ll { dir $args }
+function ifconfig { ipconfig $args}
+function type { type $args}
+function open { explorer $args}
 
 Set-PSReadLineOption -PredictionSource History
 Set-PSReadLineOption -ShowToolTips
