@@ -42,7 +42,7 @@ Set-Item -Path Env:POWERSHELL_UPDATECHECK -Value 'Off'
 $env:EDITOR = "nvim"
 $env:VISUAL = "nvim"
 
-$env:TERM = "xterm-256color"
+# $env:TERM = "xterm-256color"
 
 
 
