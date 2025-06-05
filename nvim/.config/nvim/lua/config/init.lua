@@ -15,7 +15,7 @@ function M.setup()
   -- 文件树配置
   require("modules.filetree").setup()
 
-  -- 输入法切换配置
+  -- 输入法切换配置（启用调试模式）
   require("modules.input").setup()
 end
 
