@@ -238,3 +238,25 @@ Usage:
 
 
 
+function Convert-UnixTime {
+    param (
+        [Parameter(Mandatory = $true)]
+        [long]$Timestamp
+    )
+
+    # 判断时间戳的长度
+    if ($Timestamp.ToString().Length -eq 10) {
+        # Unix 时间戳（秒）
+        $datetime = [DateTimeOffset]::FromUnixTimeSeconds($Timestamp).DateTime
+    } elseif ($Timestamp.ToString().Length -eq 13) {
+        # 毫秒级时间戳
+        $datetime = [DateTimeOffset]::FromUnixTimeMilliseconds($Timestamp).DateTime
+    } else {
+        Write-Error "无法识别的时间戳长度，请输入10位（Unix时间戳）或13位（毫秒级时间戳）的时间戳。"
+        return
+    }
+
+    return $datetime
+}
+
+
