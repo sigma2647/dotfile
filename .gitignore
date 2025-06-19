@@ -10,3 +10,6 @@ zsh/.config/htop
 elpaca
 zsh-autosuggestions
 zsh-syntax-highlighting
+fish/.config/fish/fish_variables
+yazi/.config/yazi/plugins/piper.yazi
+yazi/.config/yazi/package.toml

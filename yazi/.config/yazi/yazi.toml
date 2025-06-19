@@ -16,3 +16,7 @@ run = "nvim %*"
 max_height = 1000
 max_width = 1000
 
+
+[[plugin.prepend_previewers]]
+name = "*.md"
+run  = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"'
