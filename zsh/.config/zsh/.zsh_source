@@ -5,29 +5,37 @@
 
 export EDITOR="nvim"
 
+export PATH="$HOME/bin:$PATH"
 PATH=$PATH:~/.local/bin
 
+
+
 # goneovim
-export PATH=$PATH:/Applications/goneovim.app/Contents/MacOS
+# export PATH=$PATH:/Applications/goneovim.app/Contents/MacOS
 
 # visidata
-export PATH="/usr/local/visidata/bin:$PATH"
+# export PATH="/usr/local/visidata/bin:$PATH"
 
 # vim
 
-export PATH=$PATH:/usr/local/neovim/bin
+# ┌──────┐
+# │ nvim │
+# └──────┘
+# export PATH=$PATH:/usr/local/neovim/bin
 
-#sql
-export PATH=${PATH}:/usr/local/mysql/bin
+# ┌───────┐
+# │ mysql │
+# └───────┘
+# export PATH=${PATH}:/usr/local/mysql/bin
 
 # ┌─────────┐
 # │ go lang │
 # └─────────┘
-export PATH=/usr/local/go/bin:$PATH
-export PATH=$HOME/go/bin:$PATH
-
-PATH="$PATH:/Applications/WezTerm.app/Contents/MacOS"
-export PATH
+# export PATH=/usr/local/go/bin:$PATH
+# export PATH=$HOME/go/bin:$PATH
+# 
+# PATH="$PATH:/Applications/WezTerm.app/Contents/MacOS"
+# export PATH
 
 # ┌──────┐
 # │ doom │

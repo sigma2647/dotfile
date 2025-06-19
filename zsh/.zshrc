@@ -8,6 +8,8 @@ source $HOME/.config/zsh/.zsh_function
 
 
 
+
+
 #PROMPT='%B%F{003}  %B%F{015}%~%B%F{006} 󰅂%b%F{015} '
 #RPROMPT='%B%F{015}%T'
 
@@ -15,14 +17,14 @@ source $HOME/.config/zsh/.zsh_function
 #cat ~/.chache/wal/sequences
 
 
-export proxy="192.168.10.34:7890"
+# export proxy="192.168.10.34:7890"
 
 
 [ ! -f "$HOME/.x-cmd.root/X" ] || . "$HOME/.x-cmd.root/X" # boot up x-cmd.
 
 
 
-export PATH="/Library/TeX/texbin:$PATH"
+# export PATH="/Library/TeX/texbin:$PATH"
 
 
 alias cs='() {

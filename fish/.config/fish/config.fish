@@ -19,6 +19,7 @@ alias t='tmux'
 alias ta='tmux attach'
 alias l='y'
 alias ff='fastfetch'
+alias cursor='cursor --enable-features=UseOzonePlatform --ozone-platform=wayland --enable-wayland-ime'
 
 
 alias oo="cd $HOME/note/sigma"
@@ -49,3 +50,6 @@ function y
 	end
 	rm -f -- "$tmp"
 end
+
+
+set -gx PATH $HOME/bin $PATH
