@@ -16,16 +16,26 @@ alias g='lazygit'
 alias nvimrc='nvim ~/.config/nvim/'
 alias v='nvim'
 alias t='tmux'
-alias l='y'
-
 alias ta='tmux attach'
+alias l='y'
+alias ff='fastfetch'
+
 
 alias oo="cd $HOME/note/sigma"
 alias dot='cd ~/dotfile'
 alias pc='proxychains4'
 
 
+# zoxide (with custom command 'cd')
+zoxide init --cmd cd fish | source
+zoxide init fish | source
+
+
+# starship prompt
 starship init fish | source
+
+# direnv
+direnv hook fish | source
 
 set -Ux EDITOR nvim
 set -Ux VISUAL nvim
