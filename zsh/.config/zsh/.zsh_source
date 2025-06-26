@@ -3,7 +3,7 @@
 # │ source │
 # └────────┘
 
-export EDITOR="nvim"
+EDITOR="nvim"
 
 export PATH="$HOME/bin:$PATH"
 PATH=$PATH:~/.local/bin
