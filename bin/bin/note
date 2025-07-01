@@ -65,7 +65,7 @@ case "$1" in
             exit 1
         }
         editor="${EDITOR:-nvim}"
-        info "Opening $note_file in $editor"
+        # info "Opening $note_file in $editor"
         if [[ "$editor" == *vim* || "$editor" == *nvim* ]]; then
             "$editor" -c "cd $note_dir" -c "lcd $note_dir" "$note_file"
         else
