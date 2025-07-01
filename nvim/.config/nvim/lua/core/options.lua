@@ -16,6 +16,7 @@ vim.opt.scrolloff = 6                                 -- 光标距离顶部/底�
 vim.opt.sidescrolloff = 3                             -- 光标距离左右边界的列数
 vim.opt.wrap = true                                   -- 自动换行
 vim.opt.fillchars = {eob = " "}                       -- 设置空行显示字符
+vim.opt.autoread = true
 
 -- 搜索设置
 vim.opt.ignorecase = true                             -- 搜索时忽略大小写
@@ -33,6 +34,8 @@ vim.opt.backup = false                                -- 不创建备份文件
 vim.g.noswapfile = 1                                  -- 不创建交换文件
 vim.opt.lazyredraw = true                            -- 延迟重绘，提高性能
 vim.opt.updatetime = 300                             -- 减少更新延迟
+vim.opt.timeoutlen = 300
+vim.opt.wildignorecase = true
 
 -- 文件浏览器设置（优化性能）
 vim.g.netrw_banner = 0                               -- 关闭 netrw 横幅
