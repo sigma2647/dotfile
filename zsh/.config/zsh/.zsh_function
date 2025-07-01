@@ -15,98 +15,98 @@ function lfcd() {
 
 
 
-function note() {
-    local note_dir="$HOME/note/local"
-    local date=$(date +%Y-%m-%d)
-    local note_file="$note_dir/$date.md"
-    
-    # 确保笔记目录存在
-    mkdir -p "$note_dir" 2>/dev/null || { echo "Error: Failed to create directory $note_dir"; return 1; }
-    
-    case "$1" in
-        add)
-            shift  # 移除第一个参数，保留剩余的所有内容作为笔记
-            local content="$*"
-            if [[ -z "$content" ]]; then
-                echo "Error: No content provided for note."
-                return 1
-            fi
-            
-            # 添加时间戳到笔记
-            local timestamp=$(date +"%H:%M:%S")
-            echo "[$timestamp] $content" >> "$note_file" || { echo "Error: Failed to write to $note_file"; return 1; }
-            echo "Note added to $note_file"
-            ;;
-        
-        open)
-            # 检查并创建文件（如果不存在）
-            [[ -f "$note_file" ]] || touch "$note_file" || { echo "Error: Failed to create $note_file"; return 1; }
-            
-            # 确定编辑器
-            local editor=${EDITOR:-vim}
-            
-            # 根据编辑器类型调整启动参数
-            if [[ "$editor" == *vim* || "$editor" == *nvim* ]]; then
-                $editor -c "cd $note_dir" -c "lcd $note_dir" "$note_file"
-            else
-                # 非vim编辑器，尝试切换到目录后启动
-                (cd "$note_dir" && $editor "$note_file")
-            fi
-            ;;
-        
-        list)
-            # 显示更多有用的信息
-            if [[ -d "$note_dir" && -n "$(ls -A "$note_dir" 2>/dev/null)" ]]; then
-                echo "Available notes in $note_dir:"
-                ls -lh "$note_dir" | grep -v '^total' | sort -r
-            else
-                echo "No notes found in $note_dir"
-            fi
-            ;;
-        
-        search)
-            if [[ -z "$2" ]]; then
-                echo "Error: No search term provided."
-                return 1
-            fi
-            echo "Searching for \"$2\" in notes:"
-            # 简化搜索逻辑，避免复杂的管道
-            if grep -l "$2" "$note_dir"/*.md 2>/dev/null; then
-                echo "Found matches in above files."
-            else
-                echo "No matches found."
-            fi
-            ;;
-            
-        delete)
-            local target_file="$note_file"
-            # 允许指定要删除的日期
-            if [[ -n "$2" && "$2" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
-                target_file="$note_dir/$2.md"
-            fi
-            
-            if [[ -f "$target_file" ]]; then
-                # 添加确认提示
-                read "confirm?Are you sure you want to delete $target_file? (y/n) "
-                if [[ "$confirm" == [yY]* ]]; then
-                    rm "$target_file" && echo "Note deleted: $target_file" || echo "Error: Failed to delete $target_file"
-                else
-                    echo "Deletion cancelled."
-                fi
-            else
-                echo "Error: Note file $target_file does not exist."
-                return 1
-            fi
-            ;;
-            
-        *)
-            echo "Usage: 
-  note add <content>   - Add a new note with timestamp
-  note open            - Open today's note in editor
-  note list            - List all available notes
-  note search <term>   - Search notes for specific term
-  note delete [date]   - Delete today's note or specified date (YYYY-MM-DD)"
-            return 1
-            ;;
-    esac
-}
+# function note() {
+#     local note_dir="$HOME/note/local"
+#     local date=$(date +%Y-%m-%d)
+#     local note_file="$note_dir/$date.md"
+#     
+#     # 确保笔记目录存在
+#     mkdir -p "$note_dir" 2>/dev/null || { echo "Error: Failed to create directory $note_dir"; return 1; }
+#     
+#     case "$1" in
+#         add)
+#             shift  # 移除第一个参数，保留剩余的所有内容作为笔记
+#             local content="$*"
+#             if [[ -z "$content" ]]; then
+#                 echo "Error: No content provided for note."
+#                 return 1
+#             fi
+#             
+#             # 添加时间戳到笔记
+#             local timestamp=$(date +"%H:%M:%S")
+#             echo "[$timestamp] $content" >> "$note_file" || { echo "Error: Failed to write to $note_file"; return 1; }
+#             echo "Note added to $note_file"
+#             ;;
+#         
+#         open)
+#             # 检查并创建文件（如果不存在）
+#             [[ -f "$note_file" ]] || touch "$note_file" || { echo "Error: Failed to create $note_file"; return 1; }
+#             
+#             # 确定编辑器
+#             local editor=${EDITOR:-vim}
+#             
+#             # 根据编辑器类型调整启动参数
+#             if [[ "$editor" == *vim* || "$editor" == *nvim* ]]; then
+#                 $editor -c "cd $note_dir" -c "lcd $note_dir" "$note_file"
+#             else
+#                 # 非vim编辑器，尝试切换到目录后启动
+#                 (cd "$note_dir" && $editor "$note_file")
+#             fi
+#             ;;
+#         
+#         list)
+#             # 显示更多有用的信息
+#             if [[ -d "$note_dir" && -n "$(ls -A "$note_dir" 2>/dev/null)" ]]; then
+#                 echo "Available notes in $note_dir:"
+#                 ls -lh "$note_dir" | grep -v '^total' | sort -r
+#             else
+#                 echo "No notes found in $note_dir"
+#             fi
+#             ;;
+#         
+#         search)
+#             if [[ -z "$2" ]]; then
+#                 echo "Error: No search term provided."
+#                 return 1
+#             fi
+#             echo "Searching for \"$2\" in notes:"
+#             # 简化搜索逻辑，避免复杂的管道
+#             if grep -l "$2" "$note_dir"/*.md 2>/dev/null; then
+#                 echo "Found matches in above files."
+#             else
+#                 echo "No matches found."
+#             fi
+#             ;;
+#             
+#         delete)
+#             local target_file="$note_file"
+#             # 允许指定要删除的日期
+#             if [[ -n "$2" && "$2" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+#                 target_file="$note_dir/$2.md"
+#             fi
+#             
+#             if [[ -f "$target_file" ]]; then
+#                 # 添加确认提示
+#                 read "confirm?Are you sure you want to delete $target_file? (y/n) "
+#                 if [[ "$confirm" == [yY]* ]]; then
+#                     rm "$target_file" && echo "Note deleted: $target_file" || echo "Error: Failed to delete $target_file"
+#                 else
+#                     echo "Deletion cancelled."
+#                 fi
+#             else
+#                 echo "Error: Note file $target_file does not exist."
+#                 return 1
+#             fi
+#             ;;
+#             
+#         *)
+#             echo "Usage: 
+#   note add <content>   - Add a new note with timestamp
+#   note open            - Open today's note in editor
+#   note list            - List all available notes
+#   note search <term>   - Search notes for specific term
+#   note delete [date]   - Delete today's note or specified date (YYYY-MM-DD)"
+#             return 1
+#             ;;
+#     esac
+# }

@@ -1,11 +1,45 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-note_dir="$HOME/note/local"
-date=$(date +%Y-%m-%d)
+note_dir="${NOTE_DIR:-$HOME/note/local}"
+default_date=$(date +%Y-%m-%d)
+date="${2:-$default_date}"
 note_file="$note_dir/$date.md"
 
-mkdir -p "$note_dir" 2>/dev/null || {
-    echo "Error: Failed to create directory $note_dir"
+# ANSI 颜色
+RED="\033[31m"
+GREEN="\033[32m"
+YELLOW="\033[33m"
+CYAN="\033[36m"
+RESET="\033[0m"
+
+# 函数：输出错误信息
+error() {
+    printf "${RED}Error:${RESET} %s\n" "$1" >&2
+}
+
+# 函数：输出普通信息
+info() {
+    printf "${CYAN}%s${RESET}\n" "$1"
+}
+
+# 函数：输出帮助信息
+print_help() {
+    printf "${YELLOW}Usage:${RESET}\n"
+    printf "  note add <content>         - Add a new note to today's file\n"
+    printf "  note open [date]           - Open note (default: today)\n"
+    printf "  note list                  - List all available notes\n"
+    printf "  note search <keyword>      - Search all notes for keyword\n"
+    printf "  note delete [date]         - Delete note file (default: today)\n"
+    printf "  note help                  - Show this help message\n\n"
+    printf "${YELLOW}Examples:${RESET}\n"
+    printf "  note add \"Meeting with Alice\"\n"
+    printf "  note open 2025-06-30\n"
+    printf "  note delete 2025-06-01\n"
+}
+
+# 确保笔记目录存在
+mkdir -p "$note_dir" || {
+    error "Failed to create directory $note_dir"
     exit 1
 }
 
@@ -14,25 +48,24 @@ case "$1" in
         shift
         content="$*"
         if [[ -z "$content" ]]; then
-            echo "Error: No content provided for note."
+            error "No content provided for note."
             exit 1
         fi
         timestamp=$(date +"%H:%M:%S")
         echo "[$timestamp] $content" >> "$note_file" || {
-            echo "Error: Failed to write to $note_file"
+            error "Failed to write to $note_file"
             exit 1
         }
-        echo "Note added to $note_file"
+        info "Note added to $note_file"
         ;;
 
     open)
         [[ -f "$note_file" ]] || touch "$note_file" || {
-            echo "Error: Failed to create $note_file"
+            error "Failed to create $note_file"
             exit 1
         }
-
         editor="${EDITOR:-vim}"
-
+        info "Opening $note_file in $editor"
         if [[ "$editor" == *vim* || "$editor" == *nvim* ]]; then
             "$editor" -c "cd $note_dir" -c "lcd $note_dir" "$note_file"
         else
@@ -41,55 +74,46 @@ case "$1" in
         ;;
 
     list)
-        if [[ -d "$note_dir" && -n "$(ls -A "$note_dir" 2>/dev/null)" ]]; then
-            echo "Available notes in $note_dir:"
+        if [[ -d "$note_dir" && "$(ls -A "$note_dir")" ]]; then
+            printf "${YELLOW}Available notes in %s:${RESET}\n" "$note_dir"
             ls -lh "$note_dir" | grep -v '^total' | sort -r
         else
-            echo "No notes found in $note_dir"
+            info "No notes found in $note_dir"
         fi
         ;;
 
     search)
         if [[ -z "$2" ]]; then
-            echo "Error: No search term provided."
+            error "No search term provided."
             exit 1
         fi
-        echo "Searching for \"$2\" in notes:"
-        if grep -l "$2" "$note_dir"/*.md 2>/dev/null; then
-            echo "Found matches in above files."
-        else
-            echo "No matches found."
-        fi
+        term="$2"
+        info "Searching for \"$term\" in notes:"
+        grep -rn --color=always "$term" "$note_dir"/*.md 2>/dev/null || {
+            info "No matches found."
+        }
         ;;
 
     delete)
-        target_file="$note_file"
-        if [[ -n "$2" && "$2" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
-            target_file="$note_dir/$2.md"
-        fi
-
-        if [[ -f "$target_file" ]]; then
-            read -rp "Are you sure you want to delete $target_file? (y/n) " confirm
-            if [[ "$confirm" == [yY]* ]]; then
-                rm "$target_file" && echo "Note deleted: $target_file" || echo "Error: Failed to delete $target_file"
-            else
-                echo "Deletion cancelled."
-            fi
-        else
-            echo "Error: Note file $target_file does not exist."
+        [[ -f "$note_file" ]] || {
+            error "Note file $note_file does not exist."
             exit 1
+        }
+        read -rp "Are you sure you want to delete $note_file? (y/n) " confirm
+        if [[ "$confirm" == [yY]* ]]; then
+            rm "$note_file" && info "Note deleted: $note_file"
+        else
+            info "Deletion cancelled."
         fi
         ;;
 
+    help|--help|-h|"")
+        print_help
+        ;;
+
     *)
-        cat <<EOF
-Usage:
-  note add <content>   - Add a new note with timestamp
-  note open            - Open today's note in editor
-  note list            - List all available notes
-  note search <term>   - Search notes for specific term
-  note delete [date]   - Delete today's note or specified date (YYYY-MM-DD)
-EOF
+        error "Unknown command: $1"
+        print_help
         exit 1
         ;;
 esac
