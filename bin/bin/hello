@@ -1,5 +1,7 @@
 #!/bin/sh
 echo hello from
 
+echo "脚本路径: $0"
+echo "脚本所在目录: $(dirname $0)"
 
 echo wellcom to the bash script erra
