@@ -64,7 +64,7 @@ case "$1" in
             error "Failed to create $note_file"
             exit 1
         }
-        editor="${EDITOR:-vim}"
+        editor="${EDITOR:-nvim}"
         info "Opening $note_file in $editor"
         if [[ "$editor" == *vim* || "$editor" == *nvim* ]]; then
             "$editor" -c "cd $note_dir" -c "lcd $note_dir" "$note_file"
