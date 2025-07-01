@@ -1,0 +1,96 @@
+#!/bin/sh
+
+note_dir="$HOME/note/local"
+date=$(date +%Y-%m-%d)
+note_file="$note_dir/$date.md"
+
+mkdir -p "$note_dir" 2>/dev/null || {
+    echo "Error: Failed to create directory $note_dir"
+    exit 1
+}
+
+case "$1" in
+    add)
+        shift
+        content="$*"
+        if [[ -z "$content" ]]; then
+            echo "Error: No content provided for note."
+            exit 1
+        fi
+        timestamp=$(date +"%H:%M:%S")
+        echo "[$timestamp] $content" >> "$note_file" || {
+            echo "Error: Failed to write to $note_file"
+            exit 1
+        }
+        echo "Note added to $note_file"
+        ;;
+
+    open)
+        [[ -f "$note_file" ]] || touch "$note_file" || {
+            echo "Error: Failed to create $note_file"
+            exit 1
+        }
+
+        editor="${EDITOR:-vim}"
+
+        if [[ "$editor" == *vim* || "$editor" == *nvim* ]]; then
+            "$editor" -c "cd $note_dir" -c "lcd $note_dir" "$note_file"
+        else
+            (cd "$note_dir" && "$editor" "$note_file")
+        fi
+        ;;
+
+    list)
+        if [[ -d "$note_dir" && -n "$(ls -A "$note_dir" 2>/dev/null)" ]]; then
+            echo "Available notes in $note_dir:"
+            ls -lh "$note_dir" | grep -v '^total' | sort -r
+        else
+            echo "No notes found in $note_dir"
+        fi
+        ;;
+
+    search)
+        if [[ -z "$2" ]]; then
+            echo "Error: No search term provided."
+            exit 1
+        fi
+        echo "Searching for \"$2\" in notes:"
+        if grep -l "$2" "$note_dir"/*.md 2>/dev/null; then
+            echo "Found matches in above files."
+        else
+            echo "No matches found."
+        fi
+        ;;
+
+    delete)
+        target_file="$note_file"
+        if [[ -n "$2" && "$2" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+            target_file="$note_dir/$2.md"
+        fi
+
+        if [[ -f "$target_file" ]]; then
+            read -rp "Are you sure you want to delete $target_file? (y/n) " confirm
+            if [[ "$confirm" == [yY]* ]]; then
+                rm "$target_file" && echo "Note deleted: $target_file" || echo "Error: Failed to delete $target_file"
+            else
+                echo "Deletion cancelled."
+            fi
+        else
+            echo "Error: Note file $target_file does not exist."
+            exit 1
+        fi
+        ;;
+
+    *)
+        cat <<EOF
+Usage:
+  note add <content>   - Add a new note with timestamp
+  note open            - Open today's note in editor
+  note list            - List all available notes
+  note search <term>   - Search notes for specific term
+  note delete [date]   - Delete today's note or specified date (YYYY-MM-DD)
+EOF
+        exit 1
+        ;;
+esac
+
