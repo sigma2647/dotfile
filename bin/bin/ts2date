@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Check if an argument is provided
+if [ -z "$1" ]; then
+    echo "Usage: $0 <timestamp>"
+    echo "Converts a 10-digit (seconds) or 13-digit (milliseconds) Unix timestamp to a readable date."
+    exit 1
+fi
+
+timestamp=$1
+length=${#timestamp}
+
+# Check if the input is a number
+if ! [[ "$timestamp" =~ ^[0-9]+$ ]]; then
+    echo "Error: Timestamp must be a number." >&2
+    exit 1
+fi
+
+if [ "$length" -eq 10 ]; then
+    # Seconds timestamp
+    date -d "@$timestamp" '+%Y-%m-%d %H:%M:%S %A'
+elif [ "$length" -eq 13 ]; then
+    # Milliseconds timestamp
+    seconds=$((timestamp / 1000))
+    date -d "@$seconds" '+%Y-%m-%d %H:%M:%S %A'
+else
+    echo "Error: Invalid timestamp length. Please provide a 10-digit (seconds) or 13-digit (milliseconds) timestamp." >&2
+    exit 1
+fi

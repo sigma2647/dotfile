@@ -238,7 +238,7 @@ Usage:
 
 
 
-function Convert-UnixTime {
+function ts2date {
     param (
         [Parameter(Mandatory = $true)]
         [long]$Timestamp
