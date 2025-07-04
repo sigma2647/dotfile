@@ -5,3 +5,9 @@ echo "脚本路径: $0"
 echo "脚本所在目录: $(dirname $0)"
 
 echo wellcom to the bash script erra
+
+
+
+echo ---------------
+
+echo 在命令行中使用perl
