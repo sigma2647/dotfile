@@ -14,27 +14,8 @@ function lfcd() {
 }
 
 function oo() {
-    local base_dir="$HOME"
-    local target_dir="$base_dir/note/sigma"  # 默认目录
-    
-    # 查找所有可能包含sigma子目录的父目录（数字开头优先）
-    local potential_parents=($(find "$base_dir" -maxdepth 1 -type d \( -name "[0-9]*-*" -o -name "*note*" \) | sort -r))
-    
-    # 优先查找数字开头的目录下的sigma子目录
-    for parent in "${potential_parents[@]}"; do
-        if [[ -d "$parent/sigma" ]]; then
-            target_dir="$parent/sigma"
-            # 如果是数字开头的目录，直接使用不再继续查找
-            if [[ "$(basename "$parent")" =~ ^[0-9] ]]; then
-                break
-            fi
-        fi
-    done
-    
-    cd "$target_dir" || {
-        echo "错误：无法进入目录 $target_dir"
-        return 1
-    }
+    cd $(find "$HOME" -maxdepth 1 -type d -name "[0-9]*-*" | sort | head -1)/sigma 2>/dev/null \
+        || cd "$HOME/note/sigma"
 }
 
 
