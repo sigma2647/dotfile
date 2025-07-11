@@ -25,11 +25,11 @@ function oo() {
 
     # 如果有 sigma 子目录，就进入它；否则进入主目录；否则 fallback
     if [[ -d "$dir/sigma" ]]; then
-        cd "$dir/sigma"
+       builtin cd "$dir/sigma"
     elif [[ -d "$dir" ]]; then
-        cd "$dir"
+       builtin cd "$dir"
     else
-        cd "$HOME/note/sigma"
+       builtin cd "$HOME/note/sigma"
     fi
 }
 
