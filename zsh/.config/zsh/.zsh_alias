@@ -14,7 +14,7 @@ alias enableproxyMini='export https_proxy=http://127.0.0.1:7890 http_proxy=http:
 alias ff='fastfetch'
 #alias enableproxyMini='export https_proxy=http://127.0.0.1:33210 http_proxy=http://127.0.0.1:33210 all_proxy=socks5://127.0.0.1:33211'  # sdyun
 #
-alias oo="cd $HOME/note/sigma"
+# alias oo="cd $HOME/note/sigma"
 
 alias disableproxy='unset http_proxy https_proxy' # 取消终端代理
 alias t='tmux'
