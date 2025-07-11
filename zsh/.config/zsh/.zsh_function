@@ -13,10 +13,29 @@ function lfcd() {
 	cd "$(command lf -print-last-dir "$@")"
 }
 
+
 function oo() {
-    cd $(find "$HOME" -maxdepth 1 -type d -name "[0-9]*-*" | sort | head -1)/sigma 2>/dev/null \
-        || cd "$HOME/note/sigma"
+    # 搜索名字匹配 NOTE 的目录（不区分大小写），包括符号链接目标是目录的
+    dir=$(find "$HOME" -maxdepth 1 \( -type d -o -type l \) \
+        -iname '[0-9][0-9][0-9]-*note*' \
+        -exec bash -c 'for d; do [[ -d "$d" ]] && echo "$d"; done' _ {} + \
+        | sort | head -1)
+
+    # echo "Found: $dir"
+
+    # 如果有 sigma 子目录，就进入它；否则进入主目录；否则 fallback
+    if [[ -d "$dir/sigma" ]]; then
+        cd "$dir/sigma"
+    elif [[ -d "$dir" ]]; then
+        cd "$dir"
+    else
+        cd "$HOME/note/sigma"
+    fi
 }
+
+
+
+
 
 
 # function note() {
