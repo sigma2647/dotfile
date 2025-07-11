@@ -15,7 +15,7 @@ function lfcd() {
 
 
 function oo() {
-    # 搜索名字匹配 NOTE 的目录（不区分大小写），包括符号链接目标是目录的
+    # 查找 ~/ 下所有以数字开头且包含 note 的目录或符号链接（目标为目录）
     dir=$(find "$HOME" -maxdepth 1 \( -type d -o -type l \) \
         -iname '[0-9][0-9][0-9]-*note*' \
         -exec bash -c 'for d; do [[ -d "$d" ]] && echo "$d"; done' _ {} + \
@@ -23,13 +23,13 @@ function oo() {
 
     # echo "Found: $dir"
 
-    # 如果有 sigma 子目录，就进入它；否则进入主目录；否则 fallback
+    # 强制使用 shell 原生 cd（防止 zoxide alias 影响）
     if [[ -d "$dir/sigma" ]]; then
-       builtin cd "$dir/sigma"
+        builtin cd "$dir/sigma"
     elif [[ -d "$dir" ]]; then
-       builtin cd "$dir"
+        builtin cd "$dir"
     else
-       builtin cd "$HOME/note/sigma"
+        builtin cd "$HOME/note/sigma"
     fi
 }
 
