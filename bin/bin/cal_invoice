@@ -1,0 +1,109 @@
+#!/bin/sh
+
+# 用法: ./calculate_prices.sh 目录1 [目录2...]
+# 支持同时统计多个目录，并按数字编号排序文件
+
+# 颜色定义
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# 全局统计变量
+declare -i total_files=0
+grand_total=0
+declare -a all_dirs=()
+
+# 检查是否提供了目录参数
+if [ $# -eq 0 ]; then
+    echo -e "${YELLOW}提示: 未指定目录，将使用当前目录${NC}"
+    all_dirs=(".")
+else
+    # 验证目录是否存在
+    for dir in "$@"; do
+        if [ -d "$dir" ]; then
+            all_dirs+=("$dir")
+        else
+            echo -e "${RED}错误: 目录 '$dir' 不存在${NC}" >&2
+        fi
+    done
+    
+    if [ ${#all_dirs[@]} -eq 0 ]; then
+        echo -e "${RED}错误: 没有有效的目录可处理${NC}" >&2
+        exit 1
+    fi
+fi
+
+# 提取文件编号的函数
+get_file_number() {
+    local filename=$(basename -- "$1")
+    local basename=${filename%.*}
+    if [[ $basename =~ ^([0-9]+)_ ]]; then
+        echo ${BASH_REMATCH[1]}
+    else
+        echo 999999 # 给不符合格式的文件一个大的编号，排在后面
+    fi
+}
+
+# 处理单个目录的函数
+process_directory() {
+    local dir=$1
+    local dir_total=0
+    local dir_files=0
+    local -a file_list=()
+    
+    echo -e "\n${GREEN}正在扫描目录: ${BLUE}$dir${NC}"
+    echo "----------------------------------------"
+    
+    # 收集所有匹配的文件
+    while IFS= read -r -d '' file; do
+        file_list+=("$file")
+    done < <(find "$dir" -maxdepth 1 -type f -name '*_*_*' -print0 2>/dev/null)
+    
+    # 按编号排序文件
+    if [ ${#file_list[@]} -gt 0 ]; then
+        mapfile -t sorted_files < <(
+            for file in "${file_list[@]}"; do
+                printf "%d\t%s\n" "$(get_file_number "$file")" "$file"
+            done | sort -n -k1 | cut -f2-
+        )
+    fi
+    
+    # 处理排序后的文件
+    for file in "${sorted_files[@]}"; do
+        filename=$(basename -- "$file")
+        basename=${filename%.*}
+
+        if [[ $basename =~ ^[0-9]+_([0-9]+(\.[0-9]+)?)[^0-9]*_ ]]; then
+            amount=${BASH_REMATCH[1]}
+            dir_total=$(awk -v sum="$dir_total" -v val="$amount" 'BEGIN {printf "%.2f", sum + val}')
+            ((dir_files++))
+            
+            printf "%-6s %-10s %-25s\n" "[$dir_files]" "¥$amount" "${filename:0:20}..."
+        fi
+    done
+
+    # 更新全局统计
+    ((total_files += dir_files))
+    grand_total=$(awk -v sum="$grand_total" -v val="$dir_total" 'BEGIN {printf "%.2f", sum + val}')
+
+    # 输出当前目录统计
+    echo "----------------------------------------"
+    printf "%-15s: %5d 个文件\n" "本目录数量" "$dir_files"
+    printf "%-15s: ¥%'.2f\n" "本目录金额" "$dir_total"
+}
+
+# 主循环处理所有目录
+for dir in "${all_dirs[@]}"; do
+    process_directory "$dir"
+done
+
+# 输出全局汇总
+if [ ${#all_dirs[@]} -gt 1 ]; then
+    echo -e "\n${GREEN}============ 全局汇总 ============${NC}"
+    printf "%-15s: %5d 个文件\n" "总计文件数" "$total_files"
+    printf "%-15s: ¥%'.2f\n" "总计金额" "$grand_total"
+    printf "%-15s: %d 个目录\n" "扫描目录数" "${#all_dirs[@]}"
+    echo "========================================"
+fi
