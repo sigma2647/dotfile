@@ -4,3 +4,6 @@ else
     require("core").setup()
     require("config").setup()
 end
+
+
+-- %s/旧词/新词/g
