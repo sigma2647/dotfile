@@ -1,6 +1,6 @@
 # Configuration
 home: ~/.nap
-default_language: go
+default_language: python
 theme: nord
 
 # Colors

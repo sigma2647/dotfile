@@ -1,2 +1,2 @@
-GOPROXY=https://mirrors.tuna.tsinghua.edu.cn/go/,direct
+GOPROXY=https://goproxy.cn,direct
 GOSUMDB=sum.golang.google.cn

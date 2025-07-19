@@ -35,6 +35,11 @@ alias cs='() {
 
 
 
+# Go environment variables
+export GOROOT=/usr/lib/go
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+
 if [ -f "$HOME/.env" ]; then
     source "$HOME/.env"
 fi
