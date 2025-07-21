@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# 高性能发票计算器
+# 优化点：减少子shell、避免临时文件、使用内置命令
+
+TOTAL=0
+COUNT=0
+
+process_dir() {
+    local dir="${1:-.}"
+    echo "📁 $dir"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    local dir_total=0
+    local dir_count=0
+    
+    # 使用数组和globbing，避免find和子shell
+    shopt -s nullglob
+    local files=("$dir"/*_*_*)
+    
+    if [[ ${#files[@]} -eq 0 ]]; then
+        echo "⚠️  未找到发票文件"
+        echo
+        return
+    fi
+    
+    # 使用内置排序和数组处理
+    local sorted_files=()
+    for file in "${files[@]}"; do
+        [[ -f "$file" ]] && sorted_files+=("$(basename "$file")")
+    done
+    
+    # 使用printf排序（数值排序）
+    IFS=$'\n' read -r -d '' -a sorted_files <<<"$(printf '%s\n' "${sorted_files[@]}" | sort -t'_' -k1,1n)"
+    
+    for name in "${sorted_files[@]}"; do
+        # 使用参数扩展代替正则表达式
+        IFS='_' read -r num amount rest <<<"$name"
+        
+        # 验证格式
+        [[ $num =~ ^[0-9]+$ ]] && [[ $amount =~ ^[0-9]+(\.[0-9]+)?$ ]] || continue
+        
+        local ext="${name##*.}"
+        printf "%-4s │ ¥%-8s │ %-6s │ %s\n" "$num" "$amount" "$ext" "${name%.*}"
+        
+        # 直接计算，避免临时文件
+        dir_total=$(echo "$dir_total + $amount" | bc -l)
+        ((dir_count++))
+    done
+    
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    printf "📊 文件: %d 个  总计: ¥%.2f\n" "$dir_count" "$dir_total"
+    echo
+    
+    # 直接更新全局变量
+    TOTAL=$(echo "$TOTAL + $dir_total" | bc -l)
+    COUNT=$((COUNT + dir_count))
+    
+    shopt -u nullglob
+}
+
+# 主程序
+main() {
+    if [[ $# -eq 0 ]]; then
+        process_dir "."
+    else
+        for dir in "$@"; do
+            [[ -d "$dir" ]] && process_dir "$dir"
+        done
+    fi
+    
+    if [[ $COUNT -gt 0 ]]; then
+        echo "🎯 总计：$COUNT 个文件，¥$TOTAL"
+    fi
+}
+
+main "$@"
