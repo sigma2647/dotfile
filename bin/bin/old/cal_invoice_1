@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# 简洁版发票计算器
+# 用法: ./cal_invoice_simple [目录]
+
+TOTAL=0
+COUNT=0
+
+process_dir() {
+    local dir="${1:-.}"
+    echo "📁 $dir"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    local dir_total=0
+    local dir_count=0
+    
+    # 查找并排序文件（Windows格式排序）
+    find "$dir" -maxdepth 1 -type f -name '*_*_*' | sort -V | while IFS= read -r file; do
+        name=$(basename "$file")
+        if [[ $name =~ ^([0-9]+)_([0-9.]+)_ ]]; then
+            num="${BASH_REMATCH[1]}"
+            amount="${BASH_REMATCH[2]}"
+            
+            ext="${name##*.}"
+            printf "%-4s │ ¥%-8s │ %-6s │ %s\n" "$num" "$amount" "$ext" "${name%.*}"
+            
+            # 使用临时文件传递变量（子shell限制）
+            echo "$amount" >> /tmp/invoice_total.$$
+            echo "1" >> /tmp/invoice_count.$$
+        fi
+    done
+    
+    # 计算总和
+    if [[ -f /tmp/invoice_total.$$ ]]; then
+        dir_total=$(awk '{s+=$1} END {printf "%.2f", s}' /tmp/invoice_total.$$)
+        dir_count=$(wc -l < /tmp/invoice_count.$$)
+        
+        rm -f /tmp/invoice_total.$$ /tmp/invoice_count.$$
+        
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        printf "📊 文件: %d 个  总计: ¥%.2f\n" "$dir_count" "$dir_total"
+        echo
+        
+        # 更新全局变量
+        echo "$dir_total" >> /tmp/grand_total.$$
+        echo "$dir_count" >> /tmp/grand_count.$$
+    else
+        echo "⚠️  未找到发票文件"
+        echo
+    fi
+}
+
+# 主程序
+main() {
+    rm -f /tmp/grand_total.$$ /tmp/grand_count.$$
+    
+    if [[ $# -eq 0 ]]; then
+        process_dir "."
+    else
+        for dir in "$@"; do
+            [[ -d "$dir" ]] && process_dir "$dir"
+        done
+    fi
+    
+    # 显示总计
+    if [[ -f /tmp/grand_total.$$ ]]; then
+        total=$(awk '{s+=$1} END {printf "%.2f", s}' /tmp/grand_total.$$)
+        count=$(awk '{s+=$1} END {print s}' /tmp/grand_count.$$)
+        
+        echo "🎯 总计：$count 个文件，¥$total"
+        
+        rm -f /tmp/grand_total.$$ /tmp/grand_count.$$
+    fi
+}
+
+main "$@"
