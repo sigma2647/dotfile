@@ -1,7 +1,7 @@
 # Configuration
 home: ~/.nap
 default_language: py
-theme: nord
+theme: dracula
 
 # Colors
 background: "0"
