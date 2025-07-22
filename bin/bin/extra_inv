@@ -2,8 +2,9 @@
 
 # 检查参数
 if [ $# -eq 0 ]; then
-    echo "用法: $0 <文件夹路径> [选项]"
+    echo "用法: $0 <文件夹路径或PDF文件> [选项]"
     echo "示例: $0 ./2025T-43"
+    echo "单个文件: $0 ./new/EDC/电子发票.pdf"
     echo "递归模式: $0 ./new -r 或 $0 ./new --recursive"
     echo "调试模式: $0 ./2025T-43 debug"
     echo "递归+调试: $0 ./new -r debug"
@@ -34,9 +35,23 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-# 检查文件夹是否存在
-if [ ! -d "$FOLDER_PATH" ]; then
-    echo "错误: 文件夹 '$FOLDER_PATH' 不存在"
+# 检查输入路径是否存在
+if [ ! -e "$FOLDER_PATH" ]; then
+    echo "错误: 路径 '$FOLDER_PATH' 不存在"
+    exit 1
+fi
+
+# 判断输入是文件还是文件夹
+SINGLE_FILE_MODE=""
+if [ -f "$FOLDER_PATH" ]; then
+    # 检查是否是PDF文件
+    if [[ "$FOLDER_PATH" != *.pdf ]]; then
+        echo "错误: '$FOLDER_PATH' 不是PDF文件"
+        exit 1
+    fi
+    SINGLE_FILE_MODE="true"
+elif [ ! -d "$FOLDER_PATH" ]; then
+    echo "错误: '$FOLDER_PATH' 既不是文件也不是文件夹"
     exit 1
 fi
 
@@ -130,8 +145,11 @@ echo "----------------------------------------|----------"
 # 创建临时文件用于存储金额
 > /tmp/amounts_$$
 
-# 根据是否递归模式选择不同的处理方式
-if [ "$RECURSIVE_MODE" = "true" ]; then
+# 根据输入类型选择不同的处理方式
+if [ "$SINGLE_FILE_MODE" = "true" ]; then
+    # 单个PDF文件模式
+    process_pdf "$FOLDER_PATH" ""
+elif [ "$RECURSIVE_MODE" = "true" ]; then
     # 递归模式：使用find命令查找所有PDF文件
     find "$FOLDER_PATH" -name "*.pdf" -type f | while read -r pdf_file; do
         # 计算相对路径
@@ -161,45 +179,23 @@ echo "提取完成！"
 
 # 计算总金额（如果不是调试模式）
 if [ "$DEBUG_MODE" != "debug" ]; then
-    total=0
-    count=0
-    for pdf_file in "$FOLDER_PATH"/*.pdf; do
-        if [ -f "$pdf_file" ]; then
-            filename=$(basename "$pdf_file")
-            text_content=$(pdftotext "$pdf_file" - 2>/dev/null)
-            if [ $? -eq 0 ]; then
-                ticket_price=$(echo "$text_content" | grep -oE "票价:￥[0-9]+\.?[0-9]*" | head -1 | sed 's/票价:￥//')
-                xiaoxie_amount=$(echo "$text_content" | grep -oE "（小写）[[:space:]]*¥[[:space:]]*[0-9]+\.?[0-9]*" | head -1 | sed 's/（小写）[[:space:]]*¥[[:space:]]*//')
-                if [ -z "$xiaoxie_amount" ]; then
-                    xiaoxie_amount=$(echo "$text_content" | grep -oE "（[[:space:]]*小[[:space:]]*写[[:space:]]*）[[:space:]]*¥[[:space:]]*[0-9]+\.?[0-9]*" | head -1 | sed 's/（[[:space:]]*小[[:space:]]*写[[:space:]]*）[[:space:]]*¥[[:space:]]*//')
-                fi
-                # 处理英文括号的情况
-                if [ -z "$xiaoxie_amount" ]; then
-                    xiaoxie_amount=$(echo "$text_content" | grep -oE "\(小写\)[[:space:]]*¥[[:space:]]*[0-9]+\.?[0-9]*" | head -1 | sed 's/(小写)[[:space:]]*¥[[:space:]]*//')
-                fi
-                filename_amount=$(echo "$filename" | grep -oE "_[0-9]+\.?[0-9]*_" | head -1 | sed 's/_//g')
-                
-                if [ -n "$ticket_price" ]; then
-                    amount_num="$ticket_price"
-                elif [ -n "$xiaoxie_amount" ]; then
-                    amount_num="$xiaoxie_amount"
-                elif [ -n "$filename_amount" ]; then
-                    amount_num="$filename_amount"
-                else
-                    amount_num=""
-                fi
-                
-                if [ -n "$amount_num" ]; then
-                    total=$(echo "$total + $amount_num" | bc -l 2>/dev/null || echo "$total")
-                    count=$((count + 1))
-                fi
+    if [ -f "/tmp/amounts_$$" ]; then
+        total=0
+        count=0
+        while read -r amount; do
+            if [ -n "$amount" ]; then
+                total=$(echo "$total + $amount" | bc -l 2>/dev/null || echo "$total")
+                count=$((count + 1))
             fi
+        done < /tmp/amounts_$$
+        
+        if command -v bc &> /dev/null && [ "$count" -gt 0 ]; then
+            echo "----------------------------------------|----------"
+            printf "%-40s | ¥%.2f\n" "总计 ($count 个文件)" "$total"
         fi
-    done
-    
-    if command -v bc &> /dev/null && [ "$count" -gt 0 ]; then
-        echo "----------------------------------------|----------"
-        printf "%-40s | ¥%.2f\n" "总计 ($count 个文件)" "$total"
+        
+        # 清理临时文件
+        rm -f /tmp/amounts_$$
     fi
 fi
 
