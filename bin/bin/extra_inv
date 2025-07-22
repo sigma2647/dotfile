@@ -1,0 +1,205 @@
+#!/bin/sh
+
+# 检查参数
+if [ $# -eq 0 ]; then
+    echo "用法: $0 <文件夹路径> [选项]"
+    echo "示例: $0 ./2025T-43"
+    echo "递归模式: $0 ./new -r 或 $0 ./new --recursive"
+    echo "调试模式: $0 ./2025T-43 debug"
+    echo "递归+调试: $0 ./new -r debug"
+    exit 1
+fi
+
+FOLDER_PATH="$1"
+RECURSIVE_MODE=""
+DEBUG_MODE=""
+
+# 解析参数
+shift
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -r|--recursive)
+            RECURSIVE_MODE="true"
+            ;;
+        debug)
+            DEBUG_MODE="debug"
+            ;;
+        *)
+            # 兼容旧版本，第二个参数如果是debug就设为调试模式
+            if [ "$1" = "debug" ]; then
+                DEBUG_MODE="debug"
+            fi
+            ;;
+    esac
+    shift
+done
+
+# 检查文件夹是否存在
+if [ ! -d "$FOLDER_PATH" ]; then
+    echo "错误: 文件夹 '$FOLDER_PATH' 不存在"
+    exit 1
+fi
+
+# 检查是否安装了pdftotext
+if ! command -v pdftotext &> /dev/null; then
+    echo "错误: pdftotext 未安装，请先安装 poppler-utils"
+    exit 1
+fi
+
+# 处理单个PDF文件的函数
+process_pdf() {
+    local pdf_file="$1"
+    local relative_path="$2"
+    
+    # 获取文件名（不含路径）
+    local filename=$(basename "$pdf_file")
+    
+    # 如果是递归模式，显示相对路径
+    if [ "$RECURSIVE_MODE" = "true" ] && [ -n "$relative_path" ]; then
+        filename="$relative_path/$filename"
+    fi
+    
+    # 提取PDF文本内容
+    local text_content=$(pdftotext "$pdf_file" - 2>/dev/null)
+    
+    if [ $? -ne 0 ]; then
+        printf "%-40s | %s\n" "$filename" "提取失败"
+        return
+    fi
+    
+    # 提取金额的多种模式
+    local amount=""
+    
+    # 模式1: 票价:￥数字格式（火车票）
+    local ticket_price=$(echo "$text_content" | grep -oE "票价:￥[0-9]+\.?[0-9]*" | head -1 | sed 's/票价:￥//')
+    
+    # 模式2: （小写）¥数字格式（最准确的价税合计）
+    local xiaoxie_amount=$(echo "$text_content" | grep -oE "（小写）[[:space:]]*¥[[:space:]]*[0-9]+\.?[0-9]*" | head -1 | sed 's/（小写）[[:space:]]*¥[[:space:]]*//')
+    if [ -z "$xiaoxie_amount" ]; then
+        xiaoxie_amount=$(echo "$text_content" | grep -oE "（[[:space:]]*小[[:space:]]*写[[:space:]]*）[[:space:]]*¥[[:space:]]*[0-9]+\.?[0-9]*" | head -1 | sed 's/（[[:space:]]*小[[:space:]]*写[[:space:]]*）[[:space:]]*¥[[:space:]]*//')
+    fi
+    # 处理英文括号的情况
+    if [ -z "$xiaoxie_amount" ]; then
+        xiaoxie_amount=$(echo "$text_content" | grep -oE "\(小写\)[[:space:]]*¥[[:space:]]*[0-9]+\.?[0-9]*" | head -1 | sed 's/(小写)[[:space:]]*¥[[:space:]]*//')
+    fi
+    
+    # 模式3: 从文件名中提取数字（备用方案）
+    local filename_amount=$(echo "$(basename "$pdf_file")" | grep -oE "_[0-9]+\.?[0-9]*_" | head -1 | sed 's/_//g')
+    
+    # 调试模式输出
+    if [ "$DEBUG_MODE" = "debug" ]; then
+        echo ""
+        echo "=== 调试信息: $filename ==="
+        echo "完整路径: $pdf_file"
+        echo "票价提取: '$ticket_price'"
+        echo "小写金额提取: '$xiaoxie_amount'"
+        echo "文件名金额提取: '$filename_amount'"
+        echo "PDF文本内容（前10行）:"
+        echo "$text_content" | head -10
+        echo "=========================="
+    fi
+    
+    # 优先级：票价（火车票） > （小写）金额 > 文件名中的数字
+    if [ -n "$ticket_price" ]; then
+        amount="¥$ticket_price"
+    elif [ -n "$xiaoxie_amount" ]; then
+        amount="¥$xiaoxie_amount"
+    elif [ -n "$filename_amount" ]; then
+        amount="¥$filename_amount"
+    else
+        amount="未找到金额"
+    fi
+    
+    printf "%-40s | %s\n" "$filename" "$amount"
+    
+    # 返回金额用于总计计算
+    if [ -n "$ticket_price" ]; then
+        echo "$ticket_price" >> /tmp/amounts_$$
+    elif [ -n "$xiaoxie_amount" ]; then
+        echo "$xiaoxie_amount" >> /tmp/amounts_$$
+    elif [ -n "$filename_amount" ]; then
+        echo "$filename_amount" >> /tmp/amounts_$$
+    fi
+}
+
+echo "发票金额提取结果"
+echo "=================="
+printf "%-40s | %s\n" "文件名" "金额"
+echo "----------------------------------------|----------"
+
+# 创建临时文件用于存储金额
+> /tmp/amounts_$$
+
+# 根据是否递归模式选择不同的处理方式
+if [ "$RECURSIVE_MODE" = "true" ]; then
+    # 递归模式：使用find命令查找所有PDF文件
+    find "$FOLDER_PATH" -name "*.pdf" -type f | while read -r pdf_file; do
+        # 计算相对路径
+        relative_path=$(dirname "${pdf_file#$FOLDER_PATH/}")
+        if [ "$relative_path" = "." ]; then
+            relative_path=""
+        fi
+        process_pdf "$pdf_file" "$relative_path"
+    done
+else
+    # 非递归模式：只处理当前文件夹的PDF文件
+    found_pdf=false
+    for pdf_file in "$FOLDER_PATH"/*.pdf; do
+        if [ -f "$pdf_file" ]; then
+            found_pdf=true
+            process_pdf "$pdf_file" ""
+        fi
+    done
+    
+    if [ "$found_pdf" = false ]; then
+        echo "警告: 文件夹中没有找到PDF文件"
+    fi
+fi
+
+echo ""
+echo "提取完成！"
+
+# 计算总金额（如果不是调试模式）
+if [ "$DEBUG_MODE" != "debug" ]; then
+    total=0
+    count=0
+    for pdf_file in "$FOLDER_PATH"/*.pdf; do
+        if [ -f "$pdf_file" ]; then
+            filename=$(basename "$pdf_file")
+            text_content=$(pdftotext "$pdf_file" - 2>/dev/null)
+            if [ $? -eq 0 ]; then
+                ticket_price=$(echo "$text_content" | grep -oE "票价:￥[0-9]+\.?[0-9]*" | head -1 | sed 's/票价:￥//')
+                xiaoxie_amount=$(echo "$text_content" | grep -oE "（小写）[[:space:]]*¥[[:space:]]*[0-9]+\.?[0-9]*" | head -1 | sed 's/（小写）[[:space:]]*¥[[:space:]]*//')
+                if [ -z "$xiaoxie_amount" ]; then
+                    xiaoxie_amount=$(echo "$text_content" | grep -oE "（[[:space:]]*小[[:space:]]*写[[:space:]]*）[[:space:]]*¥[[:space:]]*[0-9]+\.?[0-9]*" | head -1 | sed 's/（[[:space:]]*小[[:space:]]*写[[:space:]]*）[[:space:]]*¥[[:space:]]*//')
+                fi
+                # 处理英文括号的情况
+                if [ -z "$xiaoxie_amount" ]; then
+                    xiaoxie_amount=$(echo "$text_content" | grep -oE "\(小写\)[[:space:]]*¥[[:space:]]*[0-9]+\.?[0-9]*" | head -1 | sed 's/(小写)[[:space:]]*¥[[:space:]]*//')
+                fi
+                filename_amount=$(echo "$filename" | grep -oE "_[0-9]+\.?[0-9]*_" | head -1 | sed 's/_//g')
+                
+                if [ -n "$ticket_price" ]; then
+                    amount_num="$ticket_price"
+                elif [ -n "$xiaoxie_amount" ]; then
+                    amount_num="$xiaoxie_amount"
+                elif [ -n "$filename_amount" ]; then
+                    amount_num="$filename_amount"
+                else
+                    amount_num=""
+                fi
+                
+                if [ -n "$amount_num" ]; then
+                    total=$(echo "$total + $amount_num" | bc -l 2>/dev/null || echo "$total")
+                    count=$((count + 1))
+                fi
+            fi
+        fi
+    done
+    
+    if command -v bc &> /dev/null && [ "$count" -gt 0 ]; then
+        echo "----------------------------------------|----------"
+        printf "%-40s | ¥%.2f\n" "总计 ($count 个文件)" "$total"
+    fi
+fi
+
