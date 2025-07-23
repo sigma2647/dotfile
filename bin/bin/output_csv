@@ -1,23 +1,14 @@
 #!/usr/bin/env bash
-# 生成文件列表 CSV（可选 SHA256、可选递归）
-# 用法：
-#   ./gen_csv.sh [目录] [--sha256] [--recursive]
-# 示例：
-#   ./gen_csv.sh                    # 当前目录，不递归
-#   ./gen_csv.sh /tmp               # 统计 /tmp，不递归
-#   ./gen_csv.sh ~/Downloads --sha256 --recursive  # 递归并带哈希
-
+# 递归优化版本 - 专门针对大目录树优化
 set -euo pipefail
 
-#-------------------------------------------------
-# 默认值
-target_dir="."          # 默认扫描当前目录
-sha256_flag=false       # 默认不计算 SHA256
-recursive_flag=false    # 默认不递归
+target_dir="."
+sha256_flag=false
+recursive_flag=false
 output_file="file_list.csv"
+parallel_jobs=$(nproc 2>/dev/null || echo 4)
 
-#-------------------------------------------------
-# 解析位置参数与可选开关
+# 解析参数
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -s|--sha256)   sha256_flag=true; shift ;;
@@ -28,51 +19,121 @@ while [[ $# -gt 0 ]]; do
   -s, --sha256   计算 SHA256
   -r, --recursive 递归子目录
 EOF
-            exit 0
-            ;;
+            exit 0 ;;
         *)
             if [[ -z ${target_dir_set:-} ]]; then
                 target_dir="$1"; target_dir_set=1
             else
-                echo "错误：多余参数 '$1'"; exit 1
+                echo "错误：多余参数 '$1'" >&2; exit 1
             fi
-            shift
-            ;;
+            shift ;;
     esac
 done
-# 检查目录是否存在
-[[ -d "$target_dir" ]] || { echo "错误：目录不存在 '$target_dir'"; exit 1; }
 
-#-------------------------------------------------
-# 构造 find 命令
-find_cmd=(find "$target_dir")
-if ! $recursive_flag; then
-    find_cmd+=(-maxdepth 1)
-fi
-find_cmd+=(-type f)
+[[ -d "$target_dir" ]] || { echo "错误：目录不存在 '$target_dir'" >&2; exit 1; }
 
-#-------------------------------------------------
-# 写 CSV
+# 规范化目录路径
+target_dir=$(realpath "$target_dir")
+target_dir_prefix="${target_dir}/"
+
+echo "🔍 扫描目录: $target_dir"
+
+# 临时文件用于批量处理
+TEMP_DIR=$(mktemp -d)
+trap 'rm -rf "$TEMP_DIR"' EXIT
+
 {
-    # 写表头
-    header="path,size"
-    $sha256_flag && header="${header},sha256"
-    printf '%s\n' "$header"
+    if $sha256_flag; then
+        echo "path,size,sha256"
+    else
+        echo "path,size"
+    fi
 
-    # 遍历文件
-    "${find_cmd[@]}" -printf '%p\0' |
-    while IFS= read -r -d '' file; do
-        # 取得相对路径（去掉 $target_dir 前缀）
-        rel_path="${file#$target_dir/}"
-        [[ $rel_path == "$file" ]] && rel_path="./${file##*/}"  # 处理根目录情况
-        size=$(stat -c%s "$file")
+    if $recursive_flag; then
+        # 递归模式优化策略
         if $sha256_flag; then
-            hash=$(sha256sum "$file" | awk '{print $1}')
-            printf '%s,%s,%s\n' "$rel_path" "$size" "$hash"
+            # 带哈希的递归：分批处理避免内存爆炸
+            echo "📊 递归扫描并计算哈希中..." >&2
+            
+            find "$target_dir" -type f -print0 | \
+            split -d -l 1000 --separator='\0' --verbose - "$TEMP_DIR/batch_" >&2 && \
+            
+            for batch_file in "$TEMP_DIR"/batch_*; do
+                [[ -f "$batch_file" ]] || continue
+                echo "处理批次: $(basename "$batch_file")..." >&2
+                
+                cat "$batch_file" | \
+                xargs -0 -P "$parallel_jobs" -I {} bash -c '
+                    file="$1"
+                    target_prefix="$2"
+                    
+                    # 快速相对路径计算
+                    if [[ "$file" == "$target_prefix"* ]]; then
+                        rel_path="${file#$target_prefix}"
+                    else
+                        rel_path="$(basename "$file")"
+                    fi
+                    
+                    # CSV转义
+                    if [[ "$rel_path" == *[\",]* ]]; then
+                        rel_path="\"${rel_path//\"/\"\"}\""
+                    fi
+                    
+                    # 获取文件信息
+                    if [[ -f "$file" ]]; then
+                        size=$(stat -c "%s" "$file" 2>/dev/null || echo "0")
+                        hash=$(sha256sum "$file" 2>/dev/null | cut -d" " -f1 || echo "")
+                        printf "%s,%s,%s\n" "$rel_path" "$size" "$hash"
+                    fi
+                ' _ {} "$target_dir_prefix"
+            done
         else
-            printf '%s,%s\n' "$rel_path" "$size"
+            # 无哈希递归：超高速模式
+            echo "⚡ 高速递归扫描中..." >&2
+            
+            # 使用find一次性获取所有信息，避免重复遍历
+            find "$target_dir" -type f -printf '%p|%s\n' | \
+            while IFS='|' read -r file size; do
+                # 超快相对路径计算
+                if [[ "$file" == "$target_dir_prefix"* ]]; then
+                    rel_path="${file#$target_dir_prefix}"
+                else
+                    rel_path="$(basename "$file")"
+                fi
+                
+                # 最小化CSV转义
+                case "$rel_path" in
+                    *[\",]*) printf '"%s",%s\n' "${rel_path//\"/\"\"}" "$size" ;;
+                    *) printf '%s,%s\n' "$rel_path" "$size" ;;
+                esac
+            done
         fi
-    done
+    else
+        # 非递归模式保持原有逻辑
+        if $sha256_flag; then
+            echo "path,size,sha256"
+            find "$target_dir" -maxdepth 1 -type f -print0 | \
+            xargs -0 -P "$parallel_jobs" -I {} bash -c '
+                file="$1"; target_prefix="$2"
+                rel_path="$(basename "$file")"
+                if [[ "$rel_path" == *[\",]* ]]; then
+                    rel_path="\"${rel_path//\"/\"\"}\""
+                fi
+                size=$(stat -c "%s" "$file" 2>/dev/null || echo "0")
+                hash=$(sha256sum "$file" 2>/dev/null | cut -d" " -f1 || echo "")
+                printf "%s,%s,%s\n" "$rel_path" "$size" "$hash"
+            ' _ {} "$target_dir_prefix"
+        else
+            find "$target_dir" -maxdepth 1 -type f -printf '%f|%s\n' | \
+            while IFS='|' read -r rel_path size; do
+                case "$rel_path" in
+                    *[\",]*) printf '"%s",%s\n' "${rel_path//\"/\"\"}" "$size" ;;
+                    *) printf '%s,%s\n' "$rel_path" "$size" ;;
+                esac
+            done
+        fi
+    fi
 } > "$output_file"
 
-echo "✅ CSV 已生成：$output_file"
+file_count=$(( $(wc -l < "$output_file") - 1 ))
+echo "✅ CSV 已生成：$output_file ($file_count 个文件)"
