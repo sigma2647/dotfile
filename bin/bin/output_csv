@@ -20,31 +20,26 @@ output_file="file_list.csv"
 # 解析位置参数与可选开关
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --sha256)   sha256_flag=true; shift ;;
-        --recursive) recursive_flag=true; shift ;;
+        -s|--sha256)   sha256_flag=true; shift ;;
+        -r|--recursive) recursive_flag=true; shift ;;
         -h|--help)
             cat <<EOF
-用法: $0 [目录] [--sha256] [--recursive]
-
-目录        要扫描的文件夹（默认为当前目录）
---sha256    额外计算 SHA256 哈希
---recursive 递归子目录
+用法: $0 [目录] [-s] [-r]
+  -s, --sha256   计算 SHA256
+  -r, --recursive 递归子目录
 EOF
             exit 0
             ;;
         *)
-            # 第一个非选项参数视为目录
             if [[ -z ${target_dir_set:-} ]]; then
-                target_dir="$1"
-                target_dir_set=1
+                target_dir="$1"; target_dir_set=1
             else
-                echo "错误：多余参数 '$1'"； exit 1
+                echo "错误：多余参数 '$1'"; exit 1
             fi
             shift
             ;;
     esac
 done
-
 # 检查目录是否存在
 [[ -d "$target_dir" ]] || { echo "错误：目录不存在 '$target_dir'"; exit 1; }
 
