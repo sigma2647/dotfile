@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+# 生成文件列表 CSV（可选 SHA256、可选递归）
+# 用法：
+#   ./gen_csv.sh [目录] [--sha256] [--recursive]
+# 示例：
+#   ./gen_csv.sh                    # 当前目录，不递归
+#   ./gen_csv.sh /tmp               # 统计 /tmp，不递归
+#   ./gen_csv.sh ~/Downloads --sha256 --recursive  # 递归并带哈希
+
+set -euo pipefail
+
+#-------------------------------------------------
+# 默认值
+target_dir="."          # 默认扫描当前目录
+sha256_flag=false       # 默认不计算 SHA256
+recursive_flag=false    # 默认不递归
+output_file="file_list.csv"
+
+#-------------------------------------------------
+# 解析位置参数与可选开关
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --sha256)   sha256_flag=true; shift ;;
+        --recursive) recursive_flag=true; shift ;;
+        -h|--help)
+            cat <<EOF
+用法: $0 [目录] [--sha256] [--recursive]
+
+目录        要扫描的文件夹（默认为当前目录）
+--sha256    额外计算 SHA256 哈希
+--recursive 递归子目录
+EOF
+            exit 0
+            ;;
+        *)
+            # 第一个非选项参数视为目录
+            if [[ -z ${target_dir_set:-} ]]; then
+                target_dir="$1"
+                target_dir_set=1
+            else
+                echo "错误：多余参数 '$1'"； exit 1
+            fi
+            shift
+            ;;
+    esac
+done
+
+# 检查目录是否存在
+[[ -d "$target_dir" ]] || { echo "错误：目录不存在 '$target_dir'"; exit 1; }
+
+#-------------------------------------------------
+# 构造 find 命令
+find_cmd=(find "$target_dir")
+if ! $recursive_flag; then
+    find_cmd+=(-maxdepth 1)
+fi
+find_cmd+=(-type f)
+
+#-------------------------------------------------
+# 写 CSV
+{
+    # 写表头
+    header="path,size"
+    $sha256_flag && header="${header},sha256"
+    printf '%s\n' "$header"
+
+    # 遍历文件
+    "${find_cmd[@]}" -printf '%p\0' |
+    while IFS= read -r -d '' file; do
+        # 取得相对路径（去掉 $target_dir 前缀）
+        rel_path="${file#$target_dir/}"
+        [[ $rel_path == "$file" ]] && rel_path="./${file##*/}"  # 处理根目录情况
+        size=$(stat -c%s "$file")
+        if $sha256_flag; then
+            hash=$(sha256sum "$file" | awk '{print $1}')
+            printf '%s,%s,%s\n' "$rel_path" "$size" "$hash"
+        else
+            printf '%s,%s\n' "$rel_path" "$size"
+        fi
+    done
+} > "$output_file"
+
+echo "✅ CSV 已生成：$output_file"
