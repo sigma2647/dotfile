@@ -16,6 +16,8 @@ setopt HIST_REDUCE_BLANKS
 setopt HIST_VERIFY
 setopt HIST_NO_STORE
 
+setopt extended_glob null_glob
+
 # setopt correct
 setopt autocd
 
