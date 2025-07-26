@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # cal_invoice_fast：高性能修复版发票计算器
 # 用法: ./cal_invoice_fast [目录1 目录2 ...]

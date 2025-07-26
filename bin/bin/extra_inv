@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # 检查参数
 if [ $# -eq 0 ]; then
