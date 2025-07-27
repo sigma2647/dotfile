@@ -1,5 +1,5 @@
 # History configuration
-HISTSIZE=10000
+HISTSIZE=100000
 SAVEHIST=$HISTSIZE
 HISTFILE=~/.zsh_history
 

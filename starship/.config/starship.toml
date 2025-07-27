@@ -228,7 +228,7 @@ format = '[[  $time ](fg:mantle bg:foam)]($style)'
 
 [character]
 disabled = false
-success_symbol = '[𝘹](bold fg:green)'
+success_symbol = "[❯](purple)"
 error_symbol = '[𝘹](bold fg:red)'
 vimcmd_symbol = '[](bold fg:green)'  # 应为 green
 vimcmd_replace_one_symbol = '[](bold fg:purple)'
