@@ -3,11 +3,12 @@
 # │ source │
 # └────────┘
 
-export EDITOR="nvim"
 
 export PATH="$HOME/bin:$PATH"
-PATH=$PATH:~/.local/bin
+export PATH=$PATH:~/.local/bin
 
+
+export EDITOR="nvim"
 
 export PATH="$HOME/.duckdb/cli/latest:$PATH"
 
