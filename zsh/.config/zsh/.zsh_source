@@ -4,13 +4,6 @@
 # └────────┘
 
 
-export PATH="$HOME/bin:$PATH"
-export PATH=$PATH:~/.local/bin
-
-
-export EDITOR="nvim"
-
-export PATH="$HOME/.duckdb/cli/latest:$PATH"
 
 # goneovim
 # export PATH=$PATH:/Applications/goneovim.app/Contents/MacOS

@@ -1,6 +1,6 @@
 source $HOME/.config/zsh/.zsh_config
 source $HOME/.config/zsh/.zsh_source
-source $HOME/.config/zsh/.zshenv # lf icon
+# source $HOME/.config/zsh/.zshenv # lf icon
 source $HOME/.config/zsh/.zsh_alias
 source $HOME/.config/zsh/.zsh_keymap
 source $HOME/.config/zsh/.zsh_eval
