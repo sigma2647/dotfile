@@ -45,3 +45,5 @@ if [ -f "$HOME/.env" ]; then
 fi
 
 
+
+# bindkey '^W' backward-kill-word
