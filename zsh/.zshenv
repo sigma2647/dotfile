@@ -6,6 +6,8 @@ export EDITOR="nvim"
 
 export PATH="$HOME/.duckdb/cli/latest:$PATH"
 
-export OBNOTE=${${(0A)$(printf %s $HOME/<->-NOTE/sigma(N))}[1]:A}
+# export OBNOTE=${${(0A)$(printf %s $HOME/<->-NOTE/sigma(N))}[1]:A}
+export OBNOTE=${${(0A)~$HOME/{note,<->-NOTE}/sigma(N-/)}[1]:P}
+# export OBNOTE=${${(0A)~$HOME/<->-NOTE/sigma(N-/)}[1]:A}
 
 # echo 'hello from .zshenv'
