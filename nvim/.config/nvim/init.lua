@@ -1,8 +1,8 @@
 if vim.g.vscode then
-    require("core.vscode").setup()
+    require("config.vscode").setup()
 else
-    require("core").setup()
     require("config").setup()
+    require("modules").setup()
 end
 
 
