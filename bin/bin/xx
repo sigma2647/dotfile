@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+# 简单的UTF-8转换脚本
+# 用法: ./xx.sh [目录路径]
+
+TARGET_DIR="${1:-.}"
+
+if [[ ! -d "$TARGET_DIR" ]]; then
+    echo "错误: 目录 '$TARGET_DIR' 不存在"
+    exit 1
+fi
+
+echo "正在处理目录: $TARGET_DIR"
+
+# 转换CSV文件为UTF-8
+find "$TARGET_DIR" -name "*.csv" | while read file; do
+    echo "处理: $file"
+    
+    # 检测当前编码
+    encoding=$(file -i "$file" | sed 's/.*charset=//' | cut -d';' -f1)
+    
+    # 如果不是UTF-8，则转换
+    if [[ "$encoding" != "utf-8" ]] && [[ "$encoding" != "us-ascii" ]]; then
+        echo "  转换编码: $encoding → UTF-8"
+        
+        # 备份原文件
+        cp "$file" "${file}.backup"
+        
+        # 尝试GB18030编码转换并添加BOM
+        if iconv -f GB18030 -t UTF-8 "$file" -o "${file}.utf8" 2>/dev/null; then
+            # 添加UTF-8 BOM (0xEF 0xBB 0xBF)
+            printf '\xEF\xBB\xBF' | cat - "${file}.utf8" > "$file"
+            rm "${file}.backup" "${file}.utf8"
+            echo "  ✓ 转换成功 (UTF-8 with BOM)"
+        else
+            echo "  ✗ 转换失败，保留原文件"
+            rm "${file}.utf8"
+        fi
+    elif [[ "$encoding" == "utf-8" ]]; then
+        echo "  添加BOM到现有UTF-8文件"
+        cp "$file" "${file}.backup"
+        printf '\xEF\xBB\xBF' | cat - "$file" > "${file}.withbom"
+        mv "${file}.withbom" "$file"
+        rm "${file}.backup"
+        echo "  ✓ 已添加BOM"
+    else
+        echo "  ✓ 已是UTF-8编码"
+    fi
+done
+
+echo "转换完成！"
+
+# 验证结果
+echo "验证结果:"
+find "$TARGET_DIR" -name "*.csv" | head -3 | while read file; do
+    echo "  $(file -i "$file")"
+done

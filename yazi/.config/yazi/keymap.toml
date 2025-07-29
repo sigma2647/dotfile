@@ -11,7 +11,7 @@ run = "plugin chmod"
 [[mgr.prepend_keymap]]
 desc = "Cd to note"
 on = ["g", "o"]
-run = "cd ~/note/sigma/"
+run = "cd $OBNOTE"
 
 [[mgr.prepend_keymap]]
 desc = "Cd to nvim config"
