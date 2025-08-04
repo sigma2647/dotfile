@@ -1,7 +1,6 @@
-[users]
-    email = 1169446204@qq.com
-    name = sigma2647
-
 [core]
     autocrlf = input
     eol = lf
+[user]
+	name = sigma2647
+	email = 1169446204@qq.com

@@ -1,19 +1,35 @@
 #!/usr/bin/env bash
 
-# 简单的UTF-8转换脚本
-# 用法: ./xx.sh [目录路径]
+# UTF-8转换脚本
+# 用法: ./xx [文件或目录路径]
 
-TARGET_DIR="${1:-.}"
-
-if [[ ! -d "$TARGET_DIR" ]]; then
-    echo "错误: 目录 '$TARGET_DIR' 不存在"
+# 检查是否提供了参数
+if [[ $# -eq 0 ]]; then
+    echo "用法: $0 [文件或目录路径]"
+    echo "示例:"
+    echo "  $0 file.csv        # 转换单个CSV文件"
+    echo "  $0 directory/      # 转换目录下所有CSV文件"
     exit 1
 fi
 
-echo "正在处理目录: $TARGET_DIR"
+TARGET="$1"
 
-# 转换CSV文件为UTF-8
-find "$TARGET_DIR" -name "*.csv" | while read file; do
+# 检查目标是否存在
+if [[ ! -e "$TARGET" ]]; then
+    echo "错误: '$TARGET' 不存在"
+    exit 1
+fi
+
+# 处理单个文件或目录
+process_file() {
+    local file="$1"
+    local ext="${file##*.}"
+    
+    # 只处理CSV文件
+    if [[ "$ext" != "csv" ]]; then
+        return 0
+    fi
+    
     echo "处理: $file"
     
     # 检测当前编码
@@ -46,12 +62,33 @@ find "$TARGET_DIR" -name "*.csv" | while read file; do
     else
         echo "  ✓ 已是UTF-8编码"
     fi
+}
+
+# 如果是单个文件
+if [[ -f "$TARGET" ]]; then
+    echo "正在处理文件: $TARGET"
+    process_file "$TARGET"
+    
+    # 验证结果
+    echo "验证结果:"
+    echo "  $(file -i "$TARGET")"
+    
+    echo "转换完成！"
+    exit 0
+fi
+
+# 如果是目录
+echo "正在处理目录: $TARGET"
+
+# 转换CSV文件为UTF-8
+find "$TARGET" -name "*.csv" | while read file; do
+    process_file "$file"
 done
 
 echo "转换完成！"
 
 # 验证结果
 echo "验证结果:"
-find "$TARGET_DIR" -name "*.csv" | head -3 | while read file; do
+find "$TARGET" -name "*.csv" | head -3 | while read file; do
     echo "  $(file -i "$file")"
 done
