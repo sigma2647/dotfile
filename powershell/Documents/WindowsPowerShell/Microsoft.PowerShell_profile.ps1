@@ -260,3 +260,34 @@ function ts2date {
 }
 
 
+
+function case {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Number
+    )
+
+    # 1. 根目录，按需修改
+    $root = 'X:\Cases\2025'
+
+    # 2. 去掉用户可能输入的前导 0（如 007 → 7）
+    $Number = $Number.TrimStart('0')
+    if ([string]::IsNullOrEmpty($Number)) { $Number = '0' }
+
+    # 3. 构造通配符
+    $pattern = "2025-$Number"
+
+    # 4. 查找
+    $matches = Get-ChildItem -Path $root -Directory -Filter $pattern
+
+    switch ($matches.Count) {
+        0 { Write-Warning "未找到目录：$root\$pattern" }
+        1 { Set-Location $matches[0].FullName }
+        default {
+            Write-Host "找到多个匹配目录，请选择："
+            $matches | Select-Object FullName | Out-Host
+        }
+    }
+}
