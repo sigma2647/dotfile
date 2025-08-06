@@ -7,6 +7,10 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "telemetry": {
+    "metrics": false,
+    "diagnostics": false
+  },
   "theme": "Ayu Mirage",
   "buffer_font_family": "JetBrainsMonoNL Nerd Font",
   "ui_font_size": 17,
