@@ -309,3 +309,9 @@ if (Get-Command -Name zoxide -ErrorAction SilentlyContinue) {
     Write-Host '[zoxide] 未检测到 zoxide，请先安装并加入 PATH。' -ForegroundColor DarkYellow
 }
 # endregion
+#
+
+
+## enable UTF-8
+
+$OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
