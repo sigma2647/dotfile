@@ -291,3 +291,21 @@ function case {
         }
     }
 }
+
+
+# region zoxide
+if (Get-Command -Name zoxide -ErrorAction SilentlyContinue) {
+    # 初始化 zoxide
+    Invoke-Expression (& {
+        $hook = if ($PSVersionTable.PSVersion.Major -lt 6) { 'prompt' } else { 'pwd' }
+        (zoxide init --hook $hook powershell) -join "`n"
+    })
+
+    # 把 cd 映射成 z（只在交互式会话里做，避免脚本里出问题）
+    if ($Host.Name -match 'ConsoleHost|Visual Studio Code Host') {
+        Set-Alias -Name cd -Value z -Option AllScope -Scope Global -Force
+    }
+} else {
+    Write-Host '[zoxide] 未检测到 zoxide，请先安装并加入 PATH。' -ForegroundColor DarkYellow
+}
+# endregion
