@@ -1,6 +1,10 @@
 [core]
     autocrlf = input
     eol = lf
+	preloadindex = true
+	fscache = true
 [user]
 	name = sigma2647
 	email = 1169446204@qq.com
+[gc]
+	auto = 256
