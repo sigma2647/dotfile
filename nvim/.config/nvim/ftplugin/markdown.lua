@@ -8,8 +8,9 @@ local map = vim.api.nvim_buf_set_keymap
 
 -- map(0, "n", "<C-c><C-c>", "<CMD>IPythonCellExecuteCell<CR>", { noremap = false, silent = false }) -- execute cell
 
-vim.o.number = false
-vim.o.relativenumber = false
+-- 仅对当前 markdown 缓冲禁用行号
+vim.opt_local.number = false
+vim.opt_local.relativenumber = false
 -- 2024-2025 Treesitter 增强功能
 -- 禁用 markdown 的 treesitter 缩进（如果存在）
 pcall(function()
@@ -98,4 +99,3 @@ vim.cmd([[
 -- 添加折叠切换快捷键
 vim.keymap.set('n', '<leader>mf', 'za', { noremap = true, silent = true, desc = "Toggle markdown fold" })
 vim.keymap.set('n', '<leader>mF', 'zA', { noremap = true, silent = true, desc = "Toggle all markdown folds" })
-

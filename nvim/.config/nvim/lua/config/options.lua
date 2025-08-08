@@ -38,16 +38,7 @@ vim.opt.timeoutlen = 300
 vim.opt.wildignorecase = true
 
 -- 文件浏览器设置（优化性能）
-vim.g.netrw_banner = 0                               -- 关闭 netrw 横幅
-vim.g.netrw_liststyle = 3                            -- 树形视图
-vim.g.netrw_browse_split = 4                         -- 在之前的窗口中打开文件
-vim.g.netrw_altv = 1                                 -- 右侧分割
-vim.g.netrw_fastbrowse = 2                           -- 快速浏览
-vim.g.netrw_silent = 1                               -- 减少提示信息
-vim.g.netrw_keepdir = 0                              -- 不保持当前目录
-vim.g.netrw_hide = 1                                 -- 隐藏隐藏文件
-vim.g.netrw_list_hide = [[\(^\|\s\s\)\zs\.\S\+]]    -- 隐藏以点开头的文件
-vim.g.netrw_special_syntax = 0                       -- 禁用特殊语法高亮以提高性能
+-- 统一到 modules/filetree.lua 内设置 netrw 选项，避免分散配置
 
 -- 语法高亮
 vim.opt.syntax = "enable"                            -- 启用语法高亮
