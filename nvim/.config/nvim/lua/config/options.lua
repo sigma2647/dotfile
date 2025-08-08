@@ -6,6 +6,8 @@ vim.opt.clipboard = "unnamedplus"                      -- 系统剪贴板支持
 vim.opt.fileencoding = "utf-8"                         -- 文件编码
 vim.opt.termguicolors = true                          -- 启用真彩色支持
 
+vim.opt.fileencodings = "utf-8,gbk,big5,cp936,gb18030,euc-jp,euc-kr,latin1,ucs-bom,ucs" --编码自动识别
+
 -- 界面设置
 vim.opt.title = true                                  -- 显示标题
 vim.opt.number = true                                 -- 显示行号
