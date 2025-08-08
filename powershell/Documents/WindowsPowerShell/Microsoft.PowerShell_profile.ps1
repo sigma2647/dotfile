@@ -20,6 +20,8 @@ Set-PSReadLineOption -ShowToolTips
 Set-PSReadLineOption -BellStyle None
 
 
+Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+
 # function goto-projects { Set-Location -Path "D:\Projects" }
 
 # Set-Alias -Name gp -Value goto-projects
@@ -315,3 +317,4 @@ if (Get-Command -Name zoxide -ErrorAction SilentlyContinue) {
 ## enable UTF-8
 
 #  $OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+
