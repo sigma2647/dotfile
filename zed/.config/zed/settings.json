@@ -7,6 +7,21 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "context_servers": {
+    "some-mcp-server": {
+      "source": "custom",
+      "enabled": true,
+      "command": "",
+      "args": [],
+      "env": {}
+    }
+  },
+  "agent": {
+    "default_model": {
+      "provider": "openrouter",
+      "model": "moonshotai/kimi-k2:free"
+    }
+  },
   "telemetry": {
     "metrics": false,
     "diagnostics": false
