@@ -12,7 +12,7 @@
     "diagnostics": false
   },
   "theme": "Ayu Mirage",
-  "buffer_font_family": "JetBrainsMonoNL Nerd Font",
+  "buffer_font_family": "Maple Mono NF CN",
   "ui_font_size": 17,
   "buffer_font_size": 17,
   "vim_mode": true,
@@ -26,8 +26,8 @@
     "custom": 1.5
   },
   "terminal": {
-    "font_family": "JetBrainsMonoNL Nerd Font",
-    "font_size": 15,
+    "font_family": "Maple Mono NF CN",
+    "font_size": 16,
     "line_height": {
       "custom": 1.5
     }
