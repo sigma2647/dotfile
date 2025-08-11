@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+for dir in ~/repo/*/; do
+  if [ -d "$dir/.git" ]; then
+    url=$(git config --file "$dir/.git/config" --get remote.origin.url 2>/dev/null)
+    echo "${dir%/}: $url"
+  fi
+done
