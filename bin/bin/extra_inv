@@ -61,33 +61,78 @@ if ! command -v pdftotext &> /dev/null; then
     exit 1
 fi
 
+# 计算字符串显示宽度的函数（考虑中文字符占2个宽度）
+get_display_width() {
+    local str="$1"
+    local width=0
+    local i=0
+
+    while [ $i -lt ${#str} ]; do
+        local char="${str:$i:1}"
+        local byte_val=$(printf "%d" "'$char" 2>/dev/null || echo 0)
+
+        # 中文字符通常在UTF-8中以高字节开始，这里用简单方法判断
+        if [ $byte_val -gt 127 ] 2>/dev/null; then
+            width=$((width + 2))
+        else
+            width=$((width + 1))
+        fi
+        i=$((i + 1))
+    done
+
+    echo $width
+}
+
+# 格式化输出函数，确保表格对齐
+format_output() {
+    local filename="$1"
+    local amount="$2"
+    local target_width=40
+
+    local display_width=$(get_display_width "$filename")
+    local padding=$((target_width - display_width))
+
+    # 确保padding不为负数
+    if [ $padding -lt 0 ]; then
+        padding=0
+    fi
+
+    # 构造空格字符串
+    local spaces=""
+    for ((i=0; i<padding; i++)); do
+        spaces="$spaces "
+    done
+
+    echo "$filename$spaces │ $amount"
+}
+
 # 处理单个PDF文件的函数
 process_pdf() {
     local pdf_file="$1"
     local relative_path="$2"
-    
+
     # 获取文件名（不含路径）
     local filename=$(basename "$pdf_file")
-    
+
     # 如果是递归模式，显示相对路径
     if [ "$RECURSIVE_MODE" = "true" ] && [ -n "$relative_path" ]; then
         filename="$relative_path/$filename"
     fi
-    
+
     # 提取PDF文本内容
     local text_content=$(pdftotext "$pdf_file" - 2>/dev/null)
-    
+
     if [ $? -ne 0 ]; then
-        printf "%-40s | %s\n" "$filename" "提取失败"
+        format_output "$filename" "提取失败"
         return
     fi
-    
+
     # 提取金额的多种模式
     local amount=""
-    
+
     # 模式1: 票价:￥数字格式（火车票）
     local ticket_price=$(echo "$text_content" | grep -oE "票价:￥[0-9]+\.?[0-9]*" | head -1 | sed 's/票价:￥//')
-    
+
     # 模式2: （小写）¥数字格式（最准确的价税合计）
     local xiaoxie_amount=$(echo "$text_content" | grep -oE "（小写）[[:space:]]*¥[[:space:]]*[0-9]+\.?[0-9]*" | head -1 | sed 's/（小写）[[:space:]]*¥[[:space:]]*//')
     if [ -z "$xiaoxie_amount" ]; then
@@ -97,10 +142,10 @@ process_pdf() {
     if [ -z "$xiaoxie_amount" ]; then
         xiaoxie_amount=$(echo "$text_content" | grep -oE "\(小写\)[[:space:]]*¥[[:space:]]*[0-9]+\.?[0-9]*" | head -1 | sed 's/(小写)[[:space:]]*¥[[:space:]]*//')
     fi
-    
+
     # 模式3: 从文件名中提取数字（备用方案）
     local filename_amount=$(echo "$(basename "$pdf_file")" | grep -oE "_[0-9]+\.?[0-9]*_" | head -1 | sed 's/_//g')
-    
+
     # 调试模式输出
     if [ "$DEBUG_MODE" = "debug" ]; then
         echo ""
@@ -113,7 +158,7 @@ process_pdf() {
         echo "$text_content" | head -10
         echo "=========================="
     fi
-    
+
     # 优先级：票价（火车票） > （小写）金额 > 文件名中的数字
     if [ -n "$ticket_price" ]; then
         amount="¥$ticket_price"
@@ -124,9 +169,9 @@ process_pdf() {
     else
         amount="未找到金额"
     fi
-    
-    printf "%-40s | %s\n" "$filename" "$amount"
-    
+
+    format_output "$filename" "$amount"
+
     # 返回金额用于总计计算
     if [ -n "$ticket_price" ]; then
         echo "$ticket_price" >> /tmp/amounts_$$
@@ -138,9 +183,9 @@ process_pdf() {
 }
 
 echo "发票金额提取结果"
-echo "=================="
-printf "%-40s | %s\n" "文件名" "金额"
-echo "----------------------------------------|----------"
+echo "---------------------------------------"
+format_output "文件名" "金额"
+# echo "----------------------------------------|----------"
 
 # 创建临时文件用于存储金额
 > /tmp/amounts_$$
@@ -168,7 +213,7 @@ else
             process_pdf "$pdf_file" ""
         fi
     done
-    
+
     if [ "$found_pdf" = false ]; then
         echo "警告: 文件夹中没有找到PDF文件"
     fi
@@ -188,14 +233,14 @@ if [ "$DEBUG_MODE" != "debug" ]; then
                 count=$((count + 1))
             fi
         done < /tmp/amounts_$$
-        
+
         if command -v bc &> /dev/null && [ "$count" -gt 0 ]; then
-            echo "----------------------------------------|----------"
-            printf "%-40s | ¥%.2f\n" "总计 ($count 个文件)" "$total"
+            # echo "----------------------------------------|----------"
+            echo "---------------------------------------"
+            format_output "总计 ($count 个文件)" $(printf "¥%.2f" "$total")
         fi
-        
+
         # 清理临时文件
         rm -f /tmp/amounts_$$
     fi
 fi
-
