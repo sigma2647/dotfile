@@ -13,3 +13,5 @@ zsh-syntax-highlighting
 fish/.config/fish/fish_variables
 yazi/.config/yazi/plugins/piper.yazi
 yazi/.config/yazi/package.toml
+AGENTS.md
+.crush
