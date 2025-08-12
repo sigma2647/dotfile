@@ -83,7 +83,6 @@ get_display_width() {
     echo $width
 }
 
-# 生成分隔线的函数
 generate_separator() {
     local target_width=40
     local left_line=$(printf '─%.0s' $(seq 1 $((target_width + 1))))
@@ -91,54 +90,11 @@ generate_separator() {
     echo "$left_line┼$right_line"
 }
 
-# 截断文件名的函数
-truncate_filename() {
-    local filename="$1"
-    local max_width=37  # 预留3个字符给省略号
-
-    local display_width=$(get_display_width "$filename")
-
-    if [ $display_width -le 40 ]; then
-        echo "$filename"
-        return
-    fi
-
-    # 需要截断
-    local truncated=""
-    local current_width=0
-    local i=0
-
-    while [ $i -lt ${#filename} ] && [ $current_width -lt $max_width ]; do
-        local char="${filename:$i:1}"
-        local byte_val=$(printf "%d" "'$char" 2>/dev/null || echo 0)
-
-        # 计算字符宽度
-        local char_width=1
-        if [ $byte_val -gt 127 ] 2>/dev/null; then
-            char_width=2
-        fi
-
-        # 检查是否还能添加这个字符
-        if [ $((current_width + char_width)) -le $max_width ]; then
-            truncated="$truncated$char"
-            current_width=$((current_width + char_width))
-        else
-            break
-        fi
-        i=$((i + 1))
-    done
-
-    echo "$truncated..."
-}
-
 # 格式化输出函数，确保表格对齐
 format_output() {
     local filename="$1"
     local amount="$2"
     local target_width=40
-
-    # 截断过长的文件名
-    filename=$(truncate_filename "$filename")
 
     local display_width=$(get_display_width "$filename")
     local padding=$((target_width - display_width))
@@ -269,7 +225,6 @@ else
         echo "警告: 文件夹中没有找到PDF文件"
     fi
 fi
-
 generate_separator
 
 # 计算总金额（如果不是调试模式）
