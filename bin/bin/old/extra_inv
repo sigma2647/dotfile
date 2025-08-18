@@ -8,16 +8,12 @@ if [ $# -eq 0 ]; then
     echo "递归模式: $0 ./new -r 或 $0 ./new --recursive"
     echo "调试模式: $0 ./2025T-43 debug"
     echo "递归+调试: $0 ./new -r debug"
-    echo "重命名模式: $0 ./new -n 或 $0 ./new --rename"
-    echo "  注: 如果文件名已以相同金额开头（如199_），则跳过重命名"
-    echo "组合模式: $0 ./new -r -n debug"
     exit 1
 fi
 
 FOLDER_PATH="$1"
 RECURSIVE_MODE=""
 DEBUG_MODE=""
-RENAME_MODE=""
 
 # 解析参数
 shift
@@ -28,9 +24,6 @@ while [ $# -gt 0 ]; do
             ;;
         debug)
             DEBUG_MODE="debug"
-            ;;
-        -n|--rename)
-            RENAME_MODE="true"
             ;;
         *)
             # 兼容旧版本，第二个参数如果是debug就设为调试模式
@@ -164,19 +157,6 @@ format_output() {
     echo "$filename$spaces │ $amount"
 }
 
-# 清理文件名中的重复金额前缀
-clean_filename() {
-    local filename="$1"
-    local amount_value="$2"
-
-    # 如果文件名以"金额_金额_"开头，去掉中间的重复金额
-    if [[ "$filename" =~ ^${amount_value}_${amount_value}_ ]]; then
-        filename="${amount_value}_${filename#*_${amount_value}_}"
-    fi
-
-    echo "$filename"
-}
-
 # 处理单个PDF文件的函数
 process_pdf() {
     local pdf_file="$1"
@@ -200,7 +180,6 @@ process_pdf() {
 
     # 提取金额的多种模式
     local amount=""
-    local amount_value=""
 
     # 模式1: 票价:￥数字格式（火车票）
     local ticket_price=$(echo "$text_content" | grep -oE "票价:￥[0-9]+\.?[0-9]*" | head -1 | sed 's/票价:￥//')
@@ -234,59 +213,33 @@ process_pdf() {
     # 优先级：票价（火车票） > （小写）金额 > 文件名中的数字
     if [ -n "$ticket_price" ]; then
         amount="¥$ticket_price"
-        amount_value="$ticket_price"
     elif [ -n "$xiaoxie_amount" ]; then
         amount="¥$xiaoxie_amount"
-        amount_value="$xiaoxie_amount"
     elif [ -n "$filename_amount" ]; then
         amount="¥$filename_amount"
-        amount_value="$filename_amount"
     else
         amount="未找到金额"
-    fi
-
-    # 添加重命名逻辑
-    if [ "$RENAME_MODE" = "true" ] && [ -n "$amount_value" ]; then
-        local dir_path=$(dirname "$pdf_file")
-        local base_name=$(basename "$pdf_file")
-
-        # 清理文件名中的重复金额前缀
-        base_name=$(clean_filename "$base_name" "$amount_value")
-
-        # 检查文件名是否已以相同金额开头
-        if [[ "$base_name" =~ ^${amount_value}_ ]]; then
-            if [ "$DEBUG_MODE" = "debug" ]; then
-                echo "跳过重命名: 文件已包含前缀 ${amount_value}_"
-            fi
-        else
-            local new_filename="${amount_value}_${base_name}"
-            # 使用引号包裹所有变量，防止空格和特殊字符问题
-            if ! mv -- "$pdf_file" "$dir_path/$new_filename"; then
-                echo "错误: 无法重命名文件 '$pdf_file'" >&2
-            else
-                if [ "$DEBUG_MODE" = "debug" ]; then
-                    echo "重命名: '$pdf_file' -> '$dir_path/$new_filename'"
-                fi
-                # 更新文件名用于显示
-                filename="$relative_path/$new_filename" 2>/dev/null || filename="$new_filename"
-            fi
-        fi
     fi
 
     format_output "$filename" "$amount"
 
     # 返回金额用于总计计算
-    if [ -n "$amount_value" ]; then
-        echo "$amount_value" >> /tmp/amounts_$$
+    if [ -n "$ticket_price" ]; then
+        echo "$ticket_price" >> /tmp/amounts_$$
+    elif [ -n "$xiaoxie_amount" ]; then
+        echo "$xiaoxie_amount" >> /tmp/amounts_$$
+    elif [ -n "$filename_amount" ]; then
+        echo "$filename_amount" >> /tmp/amounts_$$
     fi
 }
 
 echo "发票金额提取结果"
+# echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 format_output "文件名" "金额"
 generate_separator
 
 # 创建临时文件用于存储金额
-AMOUNTS_FILE=$(mktemp) || { echo "创建临时文件失败"; exit 1; }
+> /tmp/amounts_$$
 
 # 根据输入类型选择不同的处理方式
 if [ "$SINGLE_FILE_MODE" = "true" ]; then
@@ -321,7 +274,7 @@ generate_separator
 
 # 计算总金额（如果不是调试模式）
 if [ "$DEBUG_MODE" != "debug" ]; then
-    if [ -f "$AMOUNTS_FILE" ]; then
+    if [ -f "/tmp/amounts_$$" ]; then
         total=0
         count=0
         while read -r amount; do
@@ -329,14 +282,15 @@ if [ "$DEBUG_MODE" != "debug" ]; then
                 total=$(echo "$total + $amount" | bc -l 2>/dev/null || echo "$total")
                 count=$((count + 1))
             fi
-        done < "$AMOUNTS_FILE"
+        done < /tmp/amounts_$$
 
         if command -v bc &> /dev/null && [ "$count" -gt 0 ]; then
+            # echo "----------------------------------------│----------"
             format_output "总计 ($count 个文件)" $(printf "¥%.2f" "$total")
         fi
 
         # 清理临时文件
-        rm -f "$AMOUNTS_FILE"
+        rm -f /tmp/amounts_$$
     fi
 fi
 echo "提取完成！"
