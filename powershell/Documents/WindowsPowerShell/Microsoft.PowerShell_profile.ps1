@@ -93,7 +93,7 @@ function note {
         [Parameter(Position = 0)]
         [ValidateSet('add', 'open', 'list', 'search', 'delete')]
         [string]$Command,
-        
+
         [Parameter(Position = 1, ValueFromRemainingArguments = $true)]
         [string[]]$Arguments
     )
@@ -119,11 +119,11 @@ function note {
                 Write-Error "Error: No content provided for note."
                 return
             }
-            
+
             $content = $Arguments -join ' '
             $timestamp = Get-Date -Format "HH:mm:ss"
             $noteContent = "[$timestamp] $content"
-            
+
             try {
                 Add-Content -Path $noteFile -Value $noteContent
                 Write-Host "Note added to $noteFile"
@@ -132,7 +132,7 @@ function note {
                 Write-Error "Error: Failed to write to $noteFile"
             }
         }
-        
+
         'open' {
             if (-not (Test-Path $noteFile)) {
                 try {
@@ -143,7 +143,7 @@ function note {
                     return
                 }
             }
-            
+
             # Use the configured editor (nvim in your case)
             $editor = $env:EDITOR
             if ($editor -match 'nvim|vim') {
@@ -155,7 +155,7 @@ function note {
                 Pop-Location
             }
         }
-        
+
         'list' {
             if (Test-Path $noteDir) {
                 $files = Get-ChildItem -Path $noteDir -Filter "*.md"
@@ -173,16 +173,16 @@ function note {
                 Write-Host "No notes found in $noteDir"
             }
         }
-        
+
         'search' {
             if ($Arguments.Count -eq 0) {
                 Write-Error "Error: No search term provided."
                 return
             }
-            
+
             $searchTerm = $Arguments[0]
             Write-Host "Searching for `"$searchTerm`" in notes:"
-            
+
             $found = $false
             Get-ChildItem -Path $noteDir -Filter "*.md" | ForEach-Object {
                 if (Select-String -Path $_.FullName -Pattern $searchTerm -Quiet) {
@@ -190,7 +190,7 @@ function note {
                     $found = $true
                 }
             }
-            
+
             if (-not $found) {
                 Write-Host "No matches found."
             }
@@ -198,13 +198,13 @@ function note {
                 Write-Host "Found matches in above files."
             }
         }
-        
+
         'delete' {
             $targetFile = $noteFile
             if ($Arguments.Count -gt 0 -and $Arguments[0] -match '^\d{4}-\d{2}-\d{2}$') {
                 $targetFile = Join-Path $noteDir "$($Arguments[0]).md"
             }
-            
+
             if (Test-Path $targetFile) {
                 $confirm = Read-Host "Are you sure you want to delete $targetFile? (y/n)"
                 if ($confirm -match '^[yY]') {
@@ -224,10 +224,10 @@ function note {
                 Write-Error "Error: Note file $targetFile does not exist."
             }
         }
-        
+
         default {
             Write-Host @"
-Usage: 
+Usage:
   note add <content>   - Add a new note with timestamp
   note open            - Open today's note in editor
   note list            - List all available notes
@@ -317,4 +317,30 @@ if (Get-Command -Name zoxide -ErrorAction SilentlyContinue) {
 ## enable UTF-8
 
 #  $OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+
+
+function hashcal {
+    [CmdletBinding()]
+    param(
+        # 把 Mandatory 设为 $true
+        [Parameter(Mandatory = $true, Position = 0, ValueFromRemainingArguments = $true)]
+        [string[]] $Path
+    )
+
+    process {
+        foreach ($p in $Path) {
+            # 支持通配符展开
+            $files = Get-ChildItem -Path $p -File -ErrorAction SilentlyContinue
+            if (-not $files) { $files = Get-Item -LiteralPath $p -ErrorAction SilentlyContinue }
+
+            foreach ($file in $files) {
+                $sha = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToUpper()
+                Write-Output ("文件: {0}" -f $file.FullName)
+                Write-Output ("大小: {0} 字节" -f $file.Length)
+                Write-Output ("SHA-256: {0}" -f $sha)
+                Write-Output ""
+            }
+        }
+    }
+}
 
