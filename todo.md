@@ -19,3 +19,6 @@ I want markdown rerder `d` to d with background color using pure nvim
 
 参考
 https://chat.deepseek.com/a/chat/s/cd4ee489-881e-4450-b5bc-80041f58f6ce
+
+
+拿到obnote的父级目录

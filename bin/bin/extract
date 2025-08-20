@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# extract.sh — 通用解压小工具
+
+set -euo pipefail
+
+# 帮助信息
+usage() {
+  echo "用法: $0 <压缩文件>"
+  exit 1
+}
+
+# 至少需要一个参数
+[[ $# -lt 1 ]] && usage
+
+file=$1
+
+# 检查文件是否存在
+if [[ ! -f "$file" ]]; then
+  echo "错误: '$file' 不是有效的文件" >&2
+  exit 1
+fi
+
+# 根据扩展名解压
+case "$file" in
+  *.tar.bz2|*.tbz2)  tar -xvjf "$file" ;;
+  *.tar.gz|*.tgz)    tar -xvzf "$file" ;;
+  *.tar.xz|*.txz)    tar -xvJf "$file" ;;
+  *.tar.zst|*.tzst)  tar --zstd -xvf "$file" ;;
+  *.bz2)             bunzip2 -v "$file" ;;
+  *.gz)              gunzip -v "$file" ;;
+  *.rar)
+    if command -v unrar >/dev/null 2>&1; then
+      unrar x "$file"
+    else
+      echo "未安装 unrar，无法解压 .rar 文件" >&2
+      exit 1
+    fi
+    ;;
+  *.zip)  unzip -o "$file" ;;
+  *.Z)    uncompress "$file" ;;
+  *.7z)
+    if command -v 7z >/dev/null 2>&1; then
+      7z x "$file"
+    else
+      echo "未安装 7z，无法解压 .7z 文件" >&2
+      exit 1
+    fi
+    ;;
+  *.tar)  tar -xvf "$file" ;;
+  *) echo "未知格式: $file (尝试 'file $file' 检查类型)" >&2; exit 1 ;;
+esac
