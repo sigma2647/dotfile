@@ -92,9 +92,9 @@ fi
 
 
 # Check if bat is installed
-if command -v bat &> /dev/null
-then
-    # If rg is installed, create an alias for rg
-    alias cat='bat'
-fi
+# if command -v bat &> /dev/null
+# then
+#     # If rg is installed, create an alias for rg
+#     alias cat='bat'
+# fi
 
