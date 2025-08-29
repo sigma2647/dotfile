@@ -15,3 +15,4 @@ yazi/.config/yazi/plugins/piper.yazi
 yazi/.config/yazi/package.toml
 AGENTS.md
 .crush
+zed/.config/zed/settings.json
