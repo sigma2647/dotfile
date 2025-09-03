@@ -1,0 +1,44 @@
+[mgr]
+show_hidden = false
+
+[[opener.edit]]
+block = true
+for = "unix"
+run = "$EDITOR \"$@\""
+
+[[opener.edit]]
+block = true
+desc = "nvim"
+for = "windows"
+run = "nvim %*"
+
+[opener]
+# 添加doxx作为docx文件的查看器
+doxx = [
+    { run = 'doxx "$@"', block = true, desc = "Open with doxx", for = "unix" }
+]
+
+# 可选：添加其他Word文档相关的打开器
+libreoffice = [
+    { run = 'libreoffice "$@"', orphan = true, desc = "Open with LibreOffice", for = "unix" }
+]
+
+[open]
+prepend_rules = [
+    # 使用doxx打开所有docx文件
+    { name = "*.docx", use = "doxx" },
+    { name = "*.DOCX", use = "doxx" },
+    # 可选：也可以为doc文件配置（虽然doxx主要支持docx）
+    { mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document", use = "doxx" },
+    # 如果需要多个选择，可以这样配置
+    { name = "*.docx", use = ["doxx", "libreoffice"] },
+]
+
+[preview]
+max_height = 1000
+max_width = 1000
+
+
+[[plugin.prepend_previewers]]
+name = "*.md"
+run  = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"'

@@ -1,22 +1,41 @@
+# Yazi 配置文件
 [mgr]
 show_hidden = false
 
-[[opener.edit]]
-block = true
-for = "unix"
-run = "$EDITOR \"$@\""
+[opener]
+# 编辑器配置
+edit = [
+    { run = '$EDITOR "$@"', block = true, for = "unix" },
+    { run = "nvim %*", block = true, desc = "nvim", for = "windows" }
+]
 
-[[opener.edit]]
-block = true
-desc = "nvim"
-for = "windows"
-run = "nvim %*"
+# doxx - docx文件查看器
+doxx = [
+    { run = 'doxx "$@"', block = true, desc = "Open with doxx", for = "unix" }
+]
+
+# LibreOffice - 办公套件
+libreoffice = [
+    { run = 'libreoffice "$@"', orphan = true, desc = "Open with LibreOffice", for = "unix" }
+]
+
+[open]
+prepend_rules = [
+    # 使用doxx打开所有docx文件
+    { name = "*.docx", use = "doxx" },
+    { name = "*.DOCX", use = "doxx" },
+    # 通过MIME类型匹配docx文件
+    { mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document", use = "doxx" },
+    # 如果需要多个选择，可以取消下面这行的注释
+    # { name = "*.docx", use = ["doxx", "libreoffice"] },
+]
 
 [preview]
 max_height = 1000
 max_width = 1000
 
-
-[[plugin.prepend_previewers]]
-name = "*.md"
-run  = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"'
+[plugin]
+prepend_previewers = [
+    # Markdown预览器 - 使用glow美化显示
+    { name = "*.md", run = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"' }
+]
