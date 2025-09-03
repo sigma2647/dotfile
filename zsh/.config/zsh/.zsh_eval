@@ -16,4 +16,6 @@ eval "$(direnv hook zsh)"   # 如果你使用 zsh
 
 # eval "$(atuin init zsh)"
 #
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
