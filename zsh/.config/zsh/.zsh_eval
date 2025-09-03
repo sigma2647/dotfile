@@ -15,3 +15,5 @@ eval "$(direnv hook zsh)"   # 如果你使用 zsh
 # eval $(thefuck --alias)
 
 # eval "$(atuin init zsh)"
+#
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
