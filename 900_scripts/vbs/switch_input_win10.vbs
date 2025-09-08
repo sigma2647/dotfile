@@ -20,3 +20,4 @@ Else
     WshShell.Run "reg add ""HKCU\SOFTWARE\Microsoft\InputMethod\Settings\CHS"" /v ""Enable Double Pinyin"" /t REG_DWORD /d 0 /f", 0, True
     MsgBox "已切换至全拼模式！", vbInformation, "完成"
 End If
+
