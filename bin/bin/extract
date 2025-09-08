@@ -38,7 +38,7 @@ case "$file" in
     ;;
   *.zip)  unzip -o "$file" ;;
   *.Z)    uncompress "$file" ;;
-  *.7z)
+  *.7z|*.7z.001|*.7z.???)  # 支持 7z 分卷（.001/.002...）
     if command -v 7z >/dev/null 2>&1; then
       7z x "$file"
     else
